@@ -1,0 +1,16 @@
+{
+  "source_release": "scenario-five-benefit-groups-20261102",
+  "source_manifest_sha256": "b4f6dfb69896d17b6e925a6c49b1d3057b857b734f4eb0b149c3080b640ba224",
+  "source_estimator_sha256": "9f5c8d1454bf04397f41341835b27c7b26698abd682ca7106edcb45913bd652d",
+  "source_state_sha256": "a7a44f8baf2412d35249d1eab8de1fb2f1653edca0d399e803e738263fb90dee",
+  "training_data_included": false,
+  "training_performed": false,
+  "claim_stage": "Historical combined9feature prompt retained to preserve how initial claims were read; only main_claim is used.3Gemini reads, exact-string mode, earliest tie; scenes only. Singleton transport and current cards require prospective evaluation.",
+  "parity": {
+    "research_rows": 290,
+    "scenarios": 58,
+    "additional_probes": 256,
+    "max_abs_error_fraction": 0.0,
+    "absolute_tolerance_fraction": 1e-12
+  }
+}

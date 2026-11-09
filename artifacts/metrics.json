@@ -1,0 +1,46 @@
+{
+  "n_scenarios": 58,
+  "n_families": 56,
+  "metrics_oof": {
+    "vs_human_md": {
+      "spearman": 0.5235614883007478,
+      "pearson": 0.4111220713522938,
+      "mae_pp": 5.733190047680052,
+      "rmse_pp": 7.569055409625699,
+      "bias_pp": 0.05037139791050872
+    },
+    "vs_video_oof_md": {
+      "spearman": 0.7642734099838551,
+      "pearson": 0.661249769474531
+    },
+    "classes_vs_video": {
+      "spearman": 0.667521244335089,
+      "pearson": 0.6724036180901617,
+      "accuracy": 0.6551724137931034,
+      "confusion_true_rows_pred_cols": [
+        [
+          4,
+          9,
+          0
+        ],
+        [
+          0,
+          17,
+          4
+        ],
+        [
+          0,
+          7,
+          17
+        ]
+      ]
+    },
+    "low_video_class_detection": {
+      "n_low_video": 13,
+      "correctly_low": 4,
+      "false_low": 0
+    }
+  },
+  "independent_validation": false,
+  "note": "Historical research metrics, not a new live end-to-end validation of this app."
+}

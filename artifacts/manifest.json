@@ -1,0 +1,8 @@
+{
+  "files_sha256": {
+    "artifacts/ridge.json": "330fe4c7d8e656076f91d009577f67f00b90aca3f94c2eb83f18dfdcd226fb30",
+    "artifacts/metrics.json": "e52fa11c8d74be1989bf8655d40dee54f81280473c6686aefb9b114fcf1c20af",
+    "artifacts/provenance.json": "801e2741c2e1743a8dfb564d4d26d9f8342aad8e8c6ead85c8bf653c39017108",
+    "protocols/stages.json": "f9566f8c9fcec7d6569ea2307eb6993446ae75d8472d41d0b3fb0d35bda3eed9"
+  }
+}
