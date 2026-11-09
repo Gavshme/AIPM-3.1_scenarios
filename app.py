@@ -5,6 +5,7 @@ import streamlit as st
 from scenario_model.cards import parse_cards
 from scenario_model.client import LlmClient
 from scenario_model.config import DEFAULT_BASE_URL, FEATURES, LABELS, ROOT, digest
+from scenario_model.documents import parse_upload
 from scenario_model.pipeline import evaluate_card, replay_result
 
 
@@ -121,28 +122,28 @@ def render_results(results):
 new_tab, saved_tab = st.tabs(["Оценить сценарии", "Открыть результат"])
 with new_tab:
     st.write(
-        "Загрузите JSON-карточки с таймингами, изображением, репликами и экранным текстом. Посыл вручную задавать не нужно."
+        "Загрузите полные сценарии в DOCX или PDF с таблицей сцен. Посыл определится автоматически."
     )
     files = st.file_uploader(
-        "Карточки сценариев",
-        type=["json"],
+        "Файлы сценариев",
+        type=["docx", "pdf", "json"],
         accept_multiple_files=True,
         key="cards_upload",
     )
-    with st.expander("Или вставьте JSON"):
+    with st.expander("Дополнительно: формат JSON"):
         pasted = st.text_area("Текст карточек", height=180, key="cards_text")
-    example = (ROOT / "examples/scenario.json").read_text(encoding="utf-8")
-    st.download_button(
-        "Скачать пример карточки",
-        example,
-        file_name="scenario.json",
-        mime="application/json",
-    )
+        example = (ROOT / "examples/scenario.json").read_text(encoding="utf-8")
+        st.download_button(
+            "Скачать пример карточки",
+            example,
+            file_name="scenario.json",
+            mime="application/json",
+        )
     cards = []
     error = None
     try:
         for f in files or []:
-            cards.extend(parse_cards(f.getvalue().decode("utf-8-sig")))
+            cards.extend(parse_upload(f.name, f.getvalue()))
         if pasted.strip():
             cards.extend(parse_cards(pasted))
         if len({x["card"]["id"] for x in cards}) != len(cards):
