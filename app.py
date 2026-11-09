@@ -4,7 +4,7 @@ from pathlib import Path
 import streamlit as st
 from scenario_model.cards import parse_cards
 from scenario_model.client import LlmClient
-from scenario_model.config import FEATURES, LABELS, ROOT, digest
+from scenario_model.config import DEFAULT_BASE_URL, FEATURES, LABELS, ROOT, digest
 from scenario_model.pipeline import evaluate_card, replay_result
 
 
@@ -26,19 +26,19 @@ st.write(
 st.caption(
     "AI автоматически выделяет посыл из сцен, реплик и экранного текста, затем пять оценщиков измеряют семь признаков."
 )
-with st.sidebar:
-    st.subheader("Подключение")
-    key = st.text_input(
-        "API-ключ",
-        type="password",
-        help="Для новой оценки. Можно задать VSELLM_API_KEY в окружении.",
-    )
-    st.caption("Для открытия сохранённого результата ключ не нужен.")
-    with st.expander("Настройки подключения"):
-        base_url = st.text_input(
-            "Адрес API",
-            value=setting("VSELLM_BASE_URL", "https://litellm.data-light.ru/v1"),
+key = setting("VSELLM_API_KEY")
+base_url = setting("VSELLM_BASE_URL", DEFAULT_BASE_URL)
+if not key:
+    with st.sidebar:
+        st.subheader("Подключение")
+        key = st.text_input(
+            "API-ключ",
+            type="password",
+            help="Для новой оценки. Можно задать VSELLM_API_KEY в окружении.",
         )
+        st.caption("Для открытия сохранённого результата ключ не нужен.")
+        with st.expander("Настройки подключения"):
+            base_url = st.text_input("Адрес API", value=base_url)
 
 
 def render_results(results):
@@ -170,7 +170,7 @@ with new_tab:
     )
     if live or cached:
         client = LlmClient(
-            api_key=key or setting("VSELLM_API_KEY", ""),
+            api_key=key,
             base_url=base_url,
             allow_live=live,
             cache_dir=os.environ.get(
