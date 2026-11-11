@@ -12,6 +12,8 @@ FEATURES = [
     "panel__content_precision",
     "message_competition_mean",
 ]
+DEMO_FEATURE = "panel__key_service_function_demonstration"
+DEMO_FEATURES = [*FEATURES, DEMO_FEATURE]
 LABELS = dict(
     zip(
         FEATURES,
@@ -26,6 +28,7 @@ LABELS = dict(
         ],
     )
 )
+LABELS[DEMO_FEATURE] = "Показ ключевой функции сервиса/продукта"
 MODELS = [
     "google/gemini-3.1-pro-preview",
     "anthropic/claude-sonnet-4.6",
@@ -35,6 +38,7 @@ MODELS = [
 ]
 PROTOCOL_VERSION = "scenario-blind-claim-five-v1"
 AUTHOR_PROTOCOL_VERSION = "scenario-author-message-five-v1"
+DEMO_PROTOCOL_VERSION = "scenario-author-message-function-demo-five-v1"
 RESULT_VERSION = "scenario-result-v1"
 DEFAULT_BASE_URL = "https://litellm.data-light.ru/v1"
 

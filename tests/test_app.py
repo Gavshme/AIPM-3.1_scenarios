@@ -25,7 +25,7 @@ class AppTests(unittest.TestCase):
     def test_explicit_analysis_displays_claim_score_and_evidence(self):
         with tempfile.TemporaryDirectory() as cache:
             source = read_json(ROOT / "examples/scenario.json")
-            result = evaluate_card(source, FakeClient(cache))
+            result = evaluate_card(source, FakeClient(cache), use_function_demo=True)
         with patch(
             "scenario_model.pipeline.evaluate_card", return_value=copy.deepcopy(result)
         ) as evaluate, patch(
@@ -39,10 +39,14 @@ class AppTests(unittest.TestCase):
             )
             self.assertEqual(len(at.exception), 0)
             evaluate.assert_called_once()
+            self.assertTrue(evaluate.call_args.kwargs["use_function_demo"])
             post.assert_not_called()
             self.assertEqual(len(at.metric), 1)
             self.assertEqual(len(at.dataframe), 2)
             self.assertTrue(any("Выделенный посыл" in x.value for x in at.markdown))
+            self.assertTrue(
+                any("Показ ключевой функции сервиса/продукта" in x.value for x in at.markdown)
+            )
 
 
 if __name__ == "__main__":

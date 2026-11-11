@@ -1,7 +1,7 @@
 # coding: utf-8
 import math
 import numpy as np
-from .config import FEATURES, ROOT, digest, read_json, verify_bundle
+from .config import DEMO_FEATURES, FEATURES, ROOT, digest, read_json, verify_bundle
 
 
 class ScenarioRidge:
@@ -12,16 +12,18 @@ class ScenarioRidge:
         else:
             self.state = author_bundle["ridge"]
             self.bundle_hash = digest([self.bundle_hash, author_bundle])
-        if self.state["columns"] != FEATURES:
+        self.columns = self.state["columns"]
+        expected = DEMO_FEATURES if author_bundle and "function_demo" in author_bundle else FEATURES
+        if self.columns != expected:
             raise ValueError("Неверный порядок признаков.")
 
     def predict(self, rows):
         s = self.state
         x = np.array(
-            [[self._number(row[c]) for c in FEATURES] for row in rows], dtype=float
+            [[self._number(row[c]) for c in self.columns] for row in rows], dtype=float
         )
         if s["panel_consensus"]:
-            for j, c in enumerate(FEATURES):
+            for j, c in enumerate(self.columns):
                 if c.startswith(("panel__", "fresh__")):
                     x[:, j] = np.floor(x[:, j] + 0.5)
         x = np.where(np.isfinite(x), x, np.asarray(s["median"]))
@@ -65,13 +67,13 @@ class ScenarioRidge:
             "score_range": [float(p.min()), float(p.max())],
             "model_inputs": rows,
             "feature_means": {
-                c: float(np.mean([r[c] for r in rows])) for c in FEATURES
+                c: float(np.mean([r[c] for r in rows])) for c in self.columns
             },
             "feature_ranges": {
                 c: [
                     float(min(r[c] for r in individual_rows)),
                     float(max(r[c] for r in individual_rows)),
                 ]
-                for c in FEATURES
+                for c in self.columns
             },
         }

@@ -44,6 +44,11 @@ def reply(body, claim=CLAIM):
     schema = body["response_format"]["json_schema"]["schema"]
     row = default(schema["properties"]["ratings"]["items"])
     row["id"] = card["id"]
+    if "target" in row:
+        return {"ratings": [{"id": card["id"], "target": claim}]}
+    if "score" in row and "scenes" in row:
+        return {"ratings": [{"id": card["id"], "score": 2, "scenes": [2, 3],
+                             "evidence": "Покупатель проверяет товар, затем подтверждает оплату."}]}
     if "message_text" in card:
         return {"ratings": [{
             "id": card["id"],
@@ -159,6 +164,36 @@ class PipelineTests(unittest.TestCase):
         del self.source["message"]
         with self.assertRaisesRegex(ValueError, "Сообщение"):
             evaluate_card(self.source, self.client, use_author_message=True)
+
+    def test_demo_uses_one_shared_target_and_only_visual_scenes(self):
+        result = evaluate_card(self.source, self.client, use_function_demo=True)
+        self.assertEqual(len(self.client.calls), 22)
+        target = result["function_demo_target"]
+        requests = {o["slot"]: o["request"] for o in result["observations"]}
+
+        def card_from_request(slot):
+            text = requests[slot]["messages"][0]["content"]
+            return json.loads(text.split("\nSCENARIOS:\n")[1])[0]
+
+        self.assertEqual(
+            card_from_request("demo_target/1"),
+            {"id": self.source["id"], "fixed_main_claim": CLAIM},
+        )
+        for assessor in result["assessors"]:
+            self.assertEqual(
+                card_from_request(assessor["model"] + "/function_demo"),
+                {
+                    "id": self.source["id"],
+                    "target": target,
+                    "scenes": [
+                        {"visual": scene["visual"]} for scene in self.source["scenes"]
+                    ],
+                },
+            )
+            self.assertEqual(
+                assessor["features"]["panel__key_service_function_demonstration"], 2
+            )
+        self.assertEqual(replay_result(result), result["scoring"])
 
     def test_end_to_end_blind_claim_same_five_and_cached_replay(self):
         self.source.update(
@@ -287,7 +322,7 @@ class PipelineTests(unittest.TestCase):
         self.assertGreater(len(list(Path(self.tmp.name).rglob("*.json"))), 3)
 
     def test_cli_uses_cache_and_replays_without_key(self):
-        evaluate_card(self.source, self.client, use_author_message=True)
+        evaluate_card(self.source, self.client, use_function_demo=True)
         input = Path(self.tmp.name) / "input.json"
         output = Path(self.tmp.name) / "output.json"
         input.write_text(json.dumps(self.source, ensure_ascii=False))

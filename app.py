@@ -4,7 +4,7 @@ from pathlib import Path
 import streamlit as st
 from scenario_model.cards import parse_cards
 from scenario_model.client import LlmClient
-from scenario_model.config import DEFAULT_BASE_URL, FEATURES, LABELS, ROOT, digest
+from scenario_model.config import DEFAULT_BASE_URL, DEMO_FEATURE, LABELS, ROOT, digest
 from scenario_model.documents import parse_upload
 from scenario_model.pipeline import evaluate_card, replay_result
 
@@ -25,7 +25,7 @@ st.write(
     "Сравните, насколько понятно сценарии передают предложение сервиса и пользу для пользователя."
 )
 st.caption(
-    "AI формулирует посыл из раздела «Сообщение», затем пять оценщиков измеряют семь признаков."
+    "AI формулирует посыл из раздела «Сообщение», затем пять оценщиков измеряют восемь признаков."
 )
 key = setting("VSELLM_API_KEY")
 base_url = setting("VSELLM_BASE_URL", DEFAULT_BASE_URL)
@@ -66,6 +66,7 @@ def render_results(results):
             a, b = st.columns([1, 3])
             a.metric("Скор MD", f"{r['scoring']['score']:.1f}")
             a.write(r["scoring"]["class"])
+            features = r["scoring"]["feature_means"]
             b.markdown("**Выделенный посыл**")
             b.write(r["claim"]["fixed_main_claim"])
             if r["claim"]["all_different"]:
@@ -80,7 +81,7 @@ def render_results(results):
                         "Минимум": r["scoring"]["feature_ranges"][c][0],
                         "Максимум": r["scoring"]["feature_ranges"][c][1],
                     }
-                    for c in FEATURES
+                    for c in features
                 ],
                 hide_index=True,
                 width="stretch",
@@ -96,11 +97,14 @@ def render_results(results):
                     st.markdown(f"**{label}**")
                     st.write(text)
                     st.caption(evidence)
+                if "function_demo_target" in r:
+                    st.markdown("**Предложение для проверки показа функции**")
+                    st.write(r["function_demo_target"])
             with st.expander("Обоснования оценок"):
                 for assessor in r["assessors"]:
                     st.markdown("### " + assessor["model"].split("/")[-1])
                     ratings = assessor["ratings"]
-                    for c in FEATURES:
+                    for c in features:
                         st.markdown(
                             "**"
                             + LABELS[c]
@@ -116,6 +120,11 @@ def render_results(results):
                         elif c == "panel__content_precision":
                             st.write(ratings["precision"]["reason"])
                             st.caption(ratings["precision"]["evidence"])
+                        elif c == DEMO_FEATURE:
+                            demo = ratings["function_demo"]
+                            st.write(demo["evidence"])
+                            if demo["scenes"]:
+                                st.caption("Сцены " + ", ".join(map(str, demo["scenes"])))
                         else:
                             st.write(ratings["common"]["evidence"][c])
 
@@ -190,7 +199,7 @@ with new_tab:
                                 item["original"],
                                 client,
                                 progress=lambda text: status.update(label=text),
-                                use_author_message=True,
+                                use_function_demo=True,
                             )
                         )
                         status.update(

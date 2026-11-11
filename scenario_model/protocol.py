@@ -14,8 +14,16 @@ def protocols():
     return read_json(ROOT / "protocols/stages.json")
 
 
-def request_body(spec, card, claim=None, *, message=None):
-    if message is not None:
+def request_body(spec, card, claim=None, *, message=None, demo_target=None):
+    if spec.get("input") == "demo_target":
+        data = {"id": card["id"], "fixed_main_claim": claim}
+    elif spec.get("input") == "function_demo":
+        data = {
+            "id": card["id"],
+            "target": demo_target,
+            "scenes": [{"visual": scene["visual"]} for scene in card["scenes"]],
+        }
+    elif message is not None:
         data = {"id": card["id"], "message_text": message}
     else:
         data = claim_input(card) if claim is None else feature_input(card, claim)
@@ -66,7 +74,15 @@ def validate_stage(stage, spec, card, payload, claim=None, *, message=None):
     if len(payload["ratings"]) != 1 or payload["ratings"][0]["id"] != card["id"]:
         raise ProtocolError("Неверный id или неполный ответ.")
     row = payload["ratings"][0]
-    if stage == "author_claim":
+    if stage == "demo_target":
+        if not row["target"].strip():
+            raise ProtocolError("Пустое предложение для оценки показа функции.")
+    elif stage == "function_demo":
+        if not row["evidence"].strip() or (row["score"] and not row["scenes"]):
+            raise ProtocolError("Нет обоснования показа функции.")
+        if any(not 1 <= number <= len(card["scenes"]) for number in row["scenes"]):
+            raise ProtocolError("Неверный номер сцены в обосновании показа функции.")
+    elif stage == "author_claim":
         if row["status"] != "formulated" or not (row["main_claim"] or "").strip():
             raise ProtocolError("В разделе «Сообщение» не найдено продуктового утверждения.")
         quotes = row["source_quotes"]
