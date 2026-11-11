@@ -8,7 +8,7 @@ from .pipeline import evaluate_card, replay_result
 
 def main():
     ap = argparse.ArgumentParser(
-        description="Оценка сценариев: AI-посыл → пять оценщиков → Ridge MD."
+        description="Оценка сценариев: AI-посыл → четыре оценщика → Ridge MD."
     )
     sub = ap.add_subparsers(dest="command", required=True)
     e = sub.add_parser("evaluate")

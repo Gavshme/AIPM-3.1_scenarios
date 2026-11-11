@@ -4,8 +4,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import numpy as np
 from .cards import normalize_card
 from .config import (
-    AUTHOR_PROTOCOL_VERSION, DEMO_FEATURE, DEMO_PROTOCOL_VERSION,
-    FULL_CLAIM_PROTOCOL_VERSION, FUNCTION_DEMO_PROTOCOLS, MODELS,
+    ACTIVE_MODELS, AUTHOR_PROTOCOL_VERSION, DEMO_FEATURE, DEMO_PROTOCOL_VERSION,
+    FOUR_ASSESSOR_PROTOCOL_VERSION, FUNCTION_DEMO_PROTOCOLS, MODELS,
     PROTOCOL_VERSION, RESULT_VERSION, ROOT, digest, read_json,
 )
 from .protocol import protocols, request_body, validate_stage, select_claim
@@ -65,10 +65,18 @@ def _assessor_stages(assessor, demo_bundle):
     return stages
 
 
+def _assessor_plan(models):
+    assessors = [a for a in protocols()["assessors"] if a["model"] in models]
+    if [a["model"] for a in assessors] != models:
+        raise ValueError("Неверный состав оценщиков.")
+    return assessors
+
+
 def evaluate_card(source, client, progress=None, *, use_author_message=False, use_function_demo=False):
     use_author_message = use_author_message or use_function_demo
     card, ignored = normalize_card(source)
-    p = protocols()
+    assessors = _assessor_plan(ACTIVE_MODELS if use_function_demo else MODELS)
+    assessor_count = len(assessors)
     bundle, message, claim_plan = _claim_plan(source, use_author_message, use_function_demo)
     demo_bundle = bundle if use_function_demo else None
     scorer = ScenarioRidge(bundle)
@@ -95,7 +103,7 @@ def evaluate_card(source, client, progress=None, *, use_author_message=False, us
         notes.extend(nn)
     selection = _claim_selection(claim_rows, use_author_message)
     claim = selection["fixed_main_claim"]
-    emit(f"Посыл зафиксирован. Оценка {len(scorer.columns)} признаков пятью моделями.")
+    emit(f"Посыл зафиксирован. Признаков: {len(scorer.columns)}. Оценщиков: {assessor_count}.")
 
     def assess(a):
         ratings = {}
@@ -119,23 +127,21 @@ def evaluate_card(source, client, progress=None, *, use_author_message=False, us
             "normalizations": normalizations,
         }
 
-    assessed = [None] * len(p["assessors"])
-    with ThreadPoolExecutor(max_workers=5) as pool:
-        pending = {pool.submit(assess, a): i for i, a in enumerate(p["assessors"])}
+    assessed = [None] * assessor_count
+    with ThreadPoolExecutor(max_workers=assessor_count) as pool:
+        pending = {pool.submit(assess, a): i for i, a in enumerate(assessors)}
         for count, future in enumerate(as_completed(pending), start=1):
             assessed[pending[future]] = future.result()
-            emit(f"Готово оценщиков: {count} из 5.")
+            emit(f"Готово оценщиков: {count} из {assessor_count}.")
     for a in assessed:
         observations.extend(a.pop("observations"))
         notes.extend(a.pop("normalizations"))
-    if [a["model"] for a in assessed] != MODELS:
-        raise ValueError("Неверный состав оценщиков.")
-    scoring = scorer.summarize([a["features"] for a in assessed])
+    scoring = scorer.summarize([a["features"] for a in assessed], assessor_count=assessor_count)
     emit("Оценка завершена.")
     return {
         "format": RESULT_VERSION,
         "protocol_version": (
-            FULL_CLAIM_PROTOCOL_VERSION if use_function_demo
+            FOUR_ASSESSOR_PROTOCOL_VERSION if use_function_demo
             else AUTHOR_PROTOCOL_VERSION if use_author_message
             else PROTOCOL_VERSION
         ),
@@ -178,7 +184,7 @@ def replay_result(result):
     scorer = ScenarioRidge(bundle)
     if use_author_message:
         ignored.remove("message")
-    p = protocols()
+    assessors = _assessor_plan(ACTIVE_MODELS if version == FOUR_ASSESSOR_PROTOCOL_VERSION else MODELS)
     if (
         result.get("format") != RESULT_VERSION
         or version not in {PROTOCOL_VERSION, AUTHOR_PROTOCOL_VERSION, *FUNCTION_DEMO_PROTOCOLS}
@@ -191,7 +197,7 @@ def replay_result(result):
     observations = result.get("observations", [])
     expected_count = (
         len(claim_plan) + int(has_separate_demo_target)
-        + sum(len(_assessor_stages(a, demo_bundle)) for a in p["assessors"])
+        + sum(len(_assessor_stages(a, demo_bundle)) for a in assessors)
     )
     if len(observations) != expected_count:
         raise ValueError(f"Нужны все {expected_count} этапов результата.")
@@ -225,7 +231,7 @@ def replay_result(result):
         if demo_target != result.get("function_demo_target"):
             raise ValueError("Изменено предложение для оценки показа функции.")
     assessed = []
-    for a in p["assessors"]:
+    for a in assessors:
         rr = {
             stage: read(
                 stage,
@@ -241,7 +247,7 @@ def replay_result(result):
         )
     if assessed != result["assessors"]:
         raise ValueError("Оценки не совпадают с исходными ответами.")
-    scoring = scorer.summarize([a["features"] for a in assessed])
+    scoring = scorer.summarize([a["features"] for a in assessed], assessor_count=len(assessors))
     stored = result["scoring"]
     if scoring["class"] != stored["class"]:
         raise ValueError("Класс не совпадает с пересчётом.")

@@ -4,7 +4,7 @@ from pathlib import Path
 from unittest.mock import patch
 import numpy as np
 from scenario_model.config import (
-    ROOT, FEATURES, MODELS, DEMO_PROTOCOL_VERSION, FULL_CLAIM_PROTOCOL_VERSION,
+    ROOT, ACTIVE_MODELS, FEATURES, MODELS, FULL_CLAIM_PROTOCOL_VERSION, FOUR_ASSESSOR_PROTOCOL_VERSION,
     canonical, read_json,
 )
 from scenario_model.cards import normalize_card, parse_cards, claim_input
@@ -177,8 +177,10 @@ class PipelineTests(unittest.TestCase):
 
     def test_demo_uses_full_claim_and_only_visual_scenes(self):
         result = evaluate_card(self.source, self.client, use_function_demo=True)
-        self.assertEqual(len(self.client.calls), 21)
-        self.assertEqual(result["protocol_version"], FULL_CLAIM_PROTOCOL_VERSION)
+        self.assertEqual(len(self.client.calls), 17)
+        self.assertEqual(result["protocol_version"], FOUR_ASSESSOR_PROTOCOL_VERSION)
+        self.assertEqual([row["model"] for row in result["assessors"]], ACTIVE_MODELS)
+        self.assertEqual(set(body["model"] for body in self.client.calls), set(ACTIVE_MODELS))
         self.assertEqual(result["function_demo_target"], CLAIM)
         requests = {o["slot"]: o["request"] for o in result["observations"]}
 
@@ -206,18 +208,11 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Изменено предложение"):
             replay_result(result)
 
-    def test_replay_previous_demo_protocol_with_separate_target_observation(self):
+    def test_four_assessor_result_cannot_be_replayed_as_five_assessors(self):
         result = evaluate_card(self.source, self.client, use_function_demo=True)
-        spec = read_json(ROOT / "artifacts/function_demo.json")["demo_target"]
-        card = result["card"]
-        _, _, observation = self.client.observe(
-            request_body(spec, card, CLAIM),
-            "demo_target/1",
-            lambda data: validate_stage("demo_target", spec, card, data, CLAIM),
-        )
-        result["observations"].insert(1, observation)
-        result["protocol_version"] = DEMO_PROTOCOL_VERSION
-        self.assertEqual(replay_result(result), result["scoring"])
+        result["protocol_version"] = FULL_CLAIM_PROTOCOL_VERSION
+        with self.assertRaisesRegex(ValueError, "21 этап"):
+            replay_result(result)
 
     def test_end_to_end_blind_claim_same_five_and_cached_replay(self):
         self.source.update(

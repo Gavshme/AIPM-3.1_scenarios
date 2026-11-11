@@ -48,9 +48,9 @@ class ScenarioRidge:
         except (ValueError, TypeError):
             return float("nan")
 
-    def summarize(self, individual_rows):
-        if len(individual_rows) != 5:
-            raise ValueError("Для расчёта нужны все пять оценщиков.")
+    def summarize(self, individual_rows, *, assessor_count=5):
+        if len(individual_rows) != assessor_count:
+            raise ValueError(f"Для расчёта нужны оценки всех моделей ({assessor_count}).")
         # Raw competition remains available in individual_rows; only this input is pooled.
         competition = float(
             np.mean([r["message_competition_mean"] for r in individual_rows])

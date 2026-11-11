@@ -31,7 +31,8 @@ class AppTests(unittest.TestCase):
         result = evaluate_card(source, fake, use_function_demo=True)
         baseline, contributions = explain_score(result)
         self.assertAlmostEqual(baseline + sum(contributions.values()), result["scoring"]["score"])
-        self.assertEqual(result["scoring"]["score"], sum(result["scoring"]["assessor_scores"]) / 5)
+        self.assertEqual(len(result["scoring"]["assessor_scores"]), 4)
+        self.assertAlmostEqual(result["scoring"]["score"], sum(result["scoring"]["assessor_scores"]) / 4)
         with patch(
             "scenario_model.pipeline.evaluate_card", return_value=copy.deepcopy(result)
         ) as evaluate, patch("scenario_model.explanations.add_summary",
@@ -55,7 +56,7 @@ class AppTests(unittest.TestCase):
             self.assertIn(f"{result['scoring']['score']:.1f}", at.get("html")[0].proto.body)
             self.assertEqual(sum(x.value == "Сводный вывод." for x in at.text), 8)
             self.assertEqual(sum("В сценарии" in x.value for x in at.caption), 8)
-            self.assertEqual(len(fake.calls), 22)
+            self.assertEqual(len(fake.calls), 18)
             self.assertTrue(
                 any("Показ ключевой функции сервиса/продукта" in x.value for x in at.markdown)
             )
