@@ -54,6 +54,7 @@ CLASS_COLORS = {
 def result_cards(result):
     scoring = result["scoring"]
     label = scoring["class"]
+    class_source = "Класс по признакам сценария" if "classification" in scoring else "Класс по порогам MD"
     background, color, border = CLASS_COLORS[label]
     st.html(f"""
         <style>
@@ -67,6 +68,7 @@ def result_cards(result):
                 <strong>Скор MD</strong>
                 <div style="font-size:2rem;font-weight:700;line-height:1.15">{scoring["score"]:.1f}</div>
                 <div>{label} класс</div>
+                <small>{class_source}</small>
             </div>
             <div class="aipm-result-card" style="background:#f6f8fa;color:#202936;border-color:#dce1e7">
                 <strong>Основной посыл</strong>

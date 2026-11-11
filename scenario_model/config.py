@@ -42,8 +42,10 @@ AUTHOR_PROTOCOL_VERSION = "scenario-author-message-five-v1"
 DEMO_PROTOCOL_VERSION = "scenario-author-message-function-demo-five-v1"
 FULL_CLAIM_PROTOCOL_VERSION = "scenario-author-message-function-demo-full-claim-five-v1"
 FOUR_ASSESSOR_PROTOCOL_VERSION = "scenario-author-message-function-demo-full-claim-four-v1"
+ORDINAL_CLASS_PROTOCOL_VERSION = "scenario-author-message-function-demo-full-claim-four-ordinal-v1"
+FOUR_ASSESSOR_PROTOCOLS = {FOUR_ASSESSOR_PROTOCOL_VERSION, ORDINAL_CLASS_PROTOCOL_VERSION}
 FUNCTION_DEMO_PROTOCOLS = {
-    DEMO_PROTOCOL_VERSION, FULL_CLAIM_PROTOCOL_VERSION, FOUR_ASSESSOR_PROTOCOL_VERSION,
+    DEMO_PROTOCOL_VERSION, FULL_CLAIM_PROTOCOL_VERSION, *FOUR_ASSESSOR_PROTOCOLS,
 }
 RESULT_VERSION = "scenario-result-v1"
 DEFAULT_BASE_URL = "https://litellm.data-light.ru/v1"

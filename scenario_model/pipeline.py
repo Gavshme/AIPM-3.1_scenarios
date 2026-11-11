@@ -3,9 +3,10 @@ import copy
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import numpy as np
 from .cards import normalize_card
+from .classification import classify_features
 from .config import (
     ACTIVE_MODELS, AUTHOR_PROTOCOL_VERSION, DEMO_FEATURE, DEMO_PROTOCOL_VERSION,
-    FOUR_ASSESSOR_PROTOCOL_VERSION, FUNCTION_DEMO_PROTOCOLS, MODELS,
+    FOUR_ASSESSOR_PROTOCOLS, FUNCTION_DEMO_PROTOCOLS, MODELS, ORDINAL_CLASS_PROTOCOL_VERSION,
     PROTOCOL_VERSION, RESULT_VERSION, ROOT, digest, read_json,
 )
 from .protocol import protocols, request_body, validate_stage, select_claim
@@ -72,6 +73,15 @@ def _assessor_plan(models):
     return assessors
 
 
+def _score_result(scorer, assessed, assessor_count, version):
+    scoring = scorer.summarize([a["features"] for a in assessed], assessor_count=assessor_count)
+    if version == ORDINAL_CLASS_PROTOCOL_VERSION:
+        classification = classify_features(scoring["feature_means"])
+        scoring["classification"] = classification
+        scoring["class"] = classification["class"]
+    return scoring
+
+
 def evaluate_card(source, client, progress=None, *, use_author_message=False, use_function_demo=False):
     use_author_message = use_author_message or use_function_demo
     card, ignored = normalize_card(source)
@@ -136,15 +146,16 @@ def evaluate_card(source, client, progress=None, *, use_author_message=False, us
     for a in assessed:
         observations.extend(a.pop("observations"))
         notes.extend(a.pop("normalizations"))
-    scoring = scorer.summarize([a["features"] for a in assessed], assessor_count=assessor_count)
+    version = (
+        ORDINAL_CLASS_PROTOCOL_VERSION if use_function_demo
+        else AUTHOR_PROTOCOL_VERSION if use_author_message
+        else PROTOCOL_VERSION
+    )
+    scoring = _score_result(scorer, assessed, assessor_count, version)
     emit("Оценка завершена.")
     return {
         "format": RESULT_VERSION,
-        "protocol_version": (
-            FOUR_ASSESSOR_PROTOCOL_VERSION if use_function_demo
-            else AUTHOR_PROTOCOL_VERSION if use_author_message
-            else PROTOCOL_VERSION
-        ),
+        "protocol_version": version,
         "model_id": scorer.state["model_id"],
         "bundle_hash": scorer.bundle_hash,
         "input_card": copy.deepcopy(source),
@@ -184,7 +195,7 @@ def replay_result(result):
     scorer = ScenarioRidge(bundle)
     if use_author_message:
         ignored.remove("message")
-    assessors = _assessor_plan(ACTIVE_MODELS if version == FOUR_ASSESSOR_PROTOCOL_VERSION else MODELS)
+    assessors = _assessor_plan(ACTIVE_MODELS if version in FOUR_ASSESSOR_PROTOCOLS else MODELS)
     if (
         result.get("format") != RESULT_VERSION
         or version not in {PROTOCOL_VERSION, AUTHOR_PROTOCOL_VERSION, *FUNCTION_DEMO_PROTOCOLS}
@@ -247,10 +258,25 @@ def replay_result(result):
         )
     if assessed != result["assessors"]:
         raise ValueError("Оценки не совпадают с исходными ответами.")
-    scoring = scorer.summarize([a["features"] for a in assessed], assessor_count=len(assessors))
+    scoring = _score_result(scorer, assessed, len(assessors), version)
     stored = result["scoring"]
     if scoring["class"] != stored["class"]:
         raise ValueError("Класс не совпадает с пересчётом.")
+    if version == ORDINAL_CLASS_PROTOCOL_VERSION:
+        expected = scoring["classification"]
+        actual = stored.get("classification")
+        if (
+            not isinstance(actual, dict)
+            or any(actual.get(key) != expected[key] for key in ("class", "model_id", "model_hash"))
+            or not isinstance(actual.get("probabilities"), dict)
+            or actual["probabilities"].keys() != expected["probabilities"].keys()
+            or any(
+                type(actual["probabilities"][label]) not in (int, float)
+                or not np.isclose(actual["probabilities"][label], probability, rtol=0, atol=1e-10)
+                for label, probability in expected["probabilities"].items()
+            )
+        ):
+            raise ValueError("Данные классификатора не совпадают с пересчётом.")
     for k in ["score", "assessor_scores", "score_range"]:
         if not np.allclose(scoring[k], stored[k], rtol=0, atol=1e-10):
             raise ValueError("Скор не совпадает с пересчётом.")

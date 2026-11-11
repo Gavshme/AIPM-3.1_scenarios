@@ -4,7 +4,7 @@ from pathlib import Path
 from unittest.mock import patch
 import numpy as np
 from scenario_model.config import (
-    ROOT, ACTIVE_MODELS, FEATURES, MODELS, FULL_CLAIM_PROTOCOL_VERSION, FOUR_ASSESSOR_PROTOCOL_VERSION,
+    ROOT, ACTIVE_MODELS, FEATURES, MODELS, FULL_CLAIM_PROTOCOL_VERSION, ORDINAL_CLASS_PROTOCOL_VERSION,
     canonical, read_json,
 )
 from scenario_model.cards import normalize_card, parse_cards, claim_input
@@ -178,7 +178,7 @@ class PipelineTests(unittest.TestCase):
     def test_demo_uses_full_claim_and_only_visual_scenes(self):
         result = evaluate_card(self.source, self.client, use_function_demo=True)
         self.assertEqual(len(self.client.calls), 17)
-        self.assertEqual(result["protocol_version"], FOUR_ASSESSOR_PROTOCOL_VERSION)
+        self.assertEqual(result["protocol_version"], ORDINAL_CLASS_PROTOCOL_VERSION)
         self.assertEqual([row["model"] for row in result["assessors"]], ACTIVE_MODELS)
         self.assertEqual(set(body["model"] for body in self.client.calls), set(ACTIVE_MODELS))
         self.assertEqual(result["function_demo_target"], CLAIM)
@@ -212,6 +212,21 @@ class PipelineTests(unittest.TestCase):
         result = evaluate_card(self.source, self.client, use_function_demo=True)
         result["protocol_version"] = FULL_CLAIM_PROTOCOL_VERSION
         with self.assertRaisesRegex(ValueError, "21 этап"):
+            replay_result(result)
+
+    def test_ordinal_class_uses_its_own_prediction_and_preserves_ridge_score(self):
+        result = evaluate_card(self.source, self.client, use_function_demo=True)
+        scoring = result["scoring"]
+        ridge = ScenarioRidge(read_json(ROOT / "artifacts/function_demo.json"))
+        features = [a["features"] for a in result["assessors"]]
+        ridge_scoring = ridge.summarize(features, assessor_count=4)
+        self.assertEqual(scoring["score"], ridge_scoring["score"])
+        self.assertEqual(scoring["assessor_scores"], ridge_scoring["assessor_scores"])
+        classification = scoring["classification"]
+        self.assertEqual(scoring["class"], classification["class"])
+        self.assertAlmostEqual(sum(classification["probabilities"].values()), 1)
+        classification["probabilities"]["Низкий"] += 0.01
+        with self.assertRaisesRegex(ValueError, "Данные классификатора"):
             replay_result(result)
 
     def test_end_to_end_blind_claim_same_five_and_cached_replay(self):

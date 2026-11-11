@@ -53,6 +53,8 @@ class AppTests(unittest.TestCase):
             self.assertEqual(len(at.dataframe), 1)
             self.assertEqual(len(at.dataframe[0].value), 8)
             self.assertIn("Основной посыл", at.get("html")[0].proto.body)
+            self.assertIn("Класс по признакам сценария", at.get("html")[0].proto.body)
+            self.assertIn(f"{result['scoring']['classification']['class']} класс", at.get("html")[0].proto.body)
             self.assertIn(f"{result['scoring']['score']:.1f}", at.get("html")[0].proto.body)
             self.assertEqual(sum(x.value == "Сводный вывод." for x in at.text), 8)
             self.assertEqual(sum("В сценарии" in x.value for x in at.caption), 8)
