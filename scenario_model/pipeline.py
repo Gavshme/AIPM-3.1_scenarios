@@ -3,7 +3,9 @@ import copy
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import numpy as np
 from .cards import normalize_card
-from .config import MODELS, FEATURES, PROTOCOL_VERSION, RESULT_VERSION, digest
+from .config import (
+    AUTHOR_PROTOCOL_VERSION, MODELS, PROTOCOL_VERSION, RESULT_VERSION, ROOT, digest, read_json,
+)
 from .protocol import protocols, request_body, validate_stage, select_claim
 from .scoring import ScenarioRidge
 from .client import LlmClient
@@ -23,10 +25,36 @@ def _features(common, precision, benefits):
     }
 
 
-def evaluate_card(source, client, progress=None):
+def _claim_plan(source, use_author_message):
+    if not use_author_message:
+        spec = protocols()["claim"]
+        return None, None, [("claim", spec, f"claim/{i}") for i in range(1, 4)]
+    message = source.get("message")
+    if not isinstance(message, str) or not message.strip():
+        raise ValueError("Добавьте в сценарий раздел «Сообщение» с авторским посылом.")
+    bundle = read_json(ROOT / "artifacts/author_message.json")
+    return bundle, message.strip(), [("author_claim", bundle["claim"], "author_claim/1")]
+
+
+def _claim_selection(rows, use_author_message):
+    readings = [row["main_claim"] for row in rows]
+    if not use_author_message:
+        return select_claim(readings)
+    return {
+        "fixed_main_claim": readings[0],
+        "readings": readings,
+        "all_different": False,
+        "source": "author_message",
+    }
+
+
+def evaluate_card(source, client, progress=None, *, use_author_message=False):
     card, ignored = normalize_card(source)
     p = protocols()
-    scorer = ScenarioRidge()
+    bundle, message, claim_plan = _claim_plan(source, use_author_message)
+    scorer = ScenarioRidge(bundle)
+    if use_author_message:
+        ignored.remove("message")
     observations = []
     notes = []
     claim_rows = []
@@ -35,19 +63,18 @@ def evaluate_card(source, client, progress=None):
         if progress:
             progress(text)
 
-    for repeat in range(3):
-        emit("Выделение посыла: прочтение " + str(repeat + 1) + " из 3")
-        spec = p["claim"]
-        body = request_body(spec, card)
+    emit("Формулируется посыл сценария.")
+    for stage, spec, slot in claim_plan:
+        body = request_body(spec, card, message=message)
         row, nn, obs = client.observe(
             body,
-            "claim/" + str(repeat + 1),
-            lambda data: validate_stage("claim", spec, card, data),
+            slot,
+            lambda data: validate_stage(stage, spec, card, data, message=message),
         )
         claim_rows.append(row)
         observations.append(obs)
         notes.extend(nn)
-    selection = select_claim([r["main_claim"] for r in claim_rows])
+    selection = _claim_selection(claim_rows, use_author_message)
     claim = selection["fixed_main_claim"]
     emit("Посыл зафиксирован. Оценка семи признаков пятью моделями.")
 
@@ -89,7 +116,7 @@ def evaluate_card(source, client, progress=None):
     emit("Оценка завершена.")
     return {
         "format": RESULT_VERSION,
-        "protocol_version": PROTOCOL_VERSION,
+        "protocol_version": AUTHOR_PROTOCOL_VERSION if use_author_message else PROTOCOL_VERSION,
         "model_id": scorer.state["model_id"],
         "bundle_hash": scorer.bundle_hash,
         "input_card": copy.deepcopy(source),
@@ -106,12 +133,18 @@ def evaluate_card(source, client, progress=None):
 
 
 def replay_result(result):
-    card, ignored = normalize_card(result["input_card"])
-    scorer = ScenarioRidge()
+    source = result["input_card"]
+    card, ignored = normalize_card(source)
+    version = result.get("protocol_version")
+    use_author_message = version == AUTHOR_PROTOCOL_VERSION
+    bundle, message, claim_plan = _claim_plan(source, use_author_message)
+    scorer = ScenarioRidge(bundle)
+    if use_author_message:
+        ignored.remove("message")
     p = protocols()
     if (
         result.get("format") != RESULT_VERSION
-        or result.get("protocol_version") != PROTOCOL_VERSION
+        or version not in {PROTOCOL_VERSION, AUTHOR_PROTOCOL_VERSION}
         or result.get("bundle_hash") != scorer.bundle_hash
         or result.get("model_id") != scorer.state["model_id"]
         or result.get("card") != card
@@ -119,22 +152,23 @@ def replay_result(result):
     ):
         raise ValueError("Несовместимый или изменённый результат.")
     observations = result.get("observations", [])
-    if len(observations) != 18:
-        raise ValueError("Нужны все 18 этапов результата.")
+    expected_count = len(claim_plan) + len(p["assessors"]) * 3
+    if len(observations) != expected_count:
+        raise ValueError(f"Нужны все {expected_count} этапов результата.")
     byslot = {o["slot"]: o for o in observations}
-    if len(byslot) != 18:
+    if len(byslot) != expected_count:
         raise ValueError("Повторяющиеся этапы результата.")
 
-    def read(stage, spec, slot, claim=None):
-        body = request_body(spec, card, claim)
+    def read(stage, spec, slot, claim=None, *, message=None):
+        body = request_body(spec, card, claim, message=message)
         obs = byslot[slot]
         client = LlmClient(base_url=obs["base_url"], allow_live=False)
         client.verify_observation(obs, body, slot)
-        row, _ = validate_stage(stage, spec, card, obs["response"], claim)
+        row, _ = validate_stage(stage, spec, card, obs["response"], claim, message=message)
         return row
 
-    claim_rows = [read("claim", p["claim"], "claim/" + str(i + 1)) for i in range(3)]
-    selection = select_claim([r["main_claim"] for r in claim_rows])
+    claim_rows = [read(stage, spec, slot, message=message) for stage, spec, slot in claim_plan]
+    selection = _claim_selection(claim_rows, use_author_message)
     if selection != result["claim"]:
         raise ValueError("Посыл не совпадает с исходными прочтениями.")
     if result.get("claim_evidence") != [r["evidence"] for r in claim_rows]:

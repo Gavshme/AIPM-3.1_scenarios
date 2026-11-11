@@ -25,7 +25,7 @@ st.write(
     "Сравните, насколько понятно сценарии передают предложение сервиса и пользу для пользователя."
 )
 st.caption(
-    "AI автоматически выделяет посыл из сцен, реплик и экранного текста, затем пять оценщиков измеряют семь признаков."
+    "AI формулирует посыл из раздела «Сообщение», затем пять оценщиков измеряют семь признаков."
 )
 key = setting("VSELLM_API_KEY")
 base_url = setting("VSELLM_BASE_URL", DEFAULT_BASE_URL)
@@ -92,7 +92,8 @@ def render_results(results):
                 for i, (text, evidence) in enumerate(
                     zip(r["claim"]["readings"], r["claim_evidence"])
                 ):
-                    st.markdown(f"**Прочтение {i+1}**")
+                    label = "Из раздела «Сообщение»" if r["claim"].get("source") else f"Прочтение {i+1}"
+                    st.markdown(f"**{label}**")
                     st.write(text)
                     st.caption(evidence)
             with st.expander("Обоснования оценок"):
@@ -122,7 +123,7 @@ def render_results(results):
 new_tab, saved_tab = st.tabs(["Оценить сценарии", "Открыть результат"])
 with new_tab:
     st.write(
-        "Загрузите полные сценарии в DOCX или PDF с таблицей сцен. Посыл определится автоматически."
+        "Загрузите полные сценарии в DOCX или PDF с таблицей сцен и разделом «Сообщение»."
     )
     files = st.file_uploader(
         "Файлы сценариев",
@@ -159,9 +160,7 @@ with new_tab:
         st.session_state["evaluated"] = []
         st.session_state["evaluation_errors"] = []
     if cards:
-        st.caption(
-            f"Карточек: {len(cards)}. Авторские разделы «Сообщение» и «Ключевая идея» не используются для выделения посыла."
-        )
+        st.caption(f"Карточек: {len(cards)}.")
     c1, c2 = st.columns(2)
     live = c1.button(
         "Оценить сценарии", type="primary", disabled=not cards or bool(error)
@@ -191,6 +190,7 @@ with new_tab:
                                 item["original"],
                                 client,
                                 progress=lambda text: status.update(label=text),
+                                use_author_message=True,
                             )
                         )
                         status.update(

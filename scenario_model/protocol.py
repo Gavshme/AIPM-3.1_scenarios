@@ -14,8 +14,11 @@ def protocols():
     return read_json(ROOT / "protocols/stages.json")
 
 
-def request_body(spec, card, claim=None):
-    data = claim_input(card) if claim is None else feature_input(card, claim)
+def request_body(spec, card, claim=None, *, message=None):
+    if message is not None:
+        data = {"id": card["id"], "message_text": message}
+    else:
+        data = claim_input(card) if claim is None else feature_input(card, claim)
     return {
         "model": spec["model"],
         **copy.deepcopy(spec["parameters"]),
@@ -44,7 +47,7 @@ def grounded(quote, text):
     return bool(a) and any(b[i : i + len(a)] == a for i in range(len(b) - len(a) + 1))
 
 
-def validate_stage(stage, spec, card, payload, claim=None):
+def validate_stage(stage, spec, card, payload, claim=None, *, message=None):
     payload = copy.deepcopy(payload)
     notes = []
     if isinstance(payload, list):
@@ -63,7 +66,14 @@ def validate_stage(stage, spec, card, payload, claim=None):
     if len(payload["ratings"]) != 1 or payload["ratings"][0]["id"] != card["id"]:
         raise ProtocolError("Неверный id или неполный ответ.")
     row = payload["ratings"][0]
-    if stage == "claim":
+    if stage == "author_claim":
+        if row["status"] != "formulated" or not (row["main_claim"] or "").strip():
+            raise ProtocolError("В разделе «Сообщение» не найдено продуктового утверждения.")
+        quotes = row["source_quotes"]
+        if not quotes or any(not grounded(quote, message) for quote in quotes):
+            raise ProtocolError("Формулировка посыла не подтверждена цитатами из «Сообщения».")
+        row["evidence"] = "\n".join(quotes)
+    elif stage == "claim":
         if not row["main_claim"].strip() or not row["evidence"].strip():
             raise ProtocolError("Нет посыла или обоснования его выделения.")
         if row["panel__distinct_benefit_count"] != min(4, len(row["benefits"])):

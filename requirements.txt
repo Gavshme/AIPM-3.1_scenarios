@@ -2,3 +2,5 @@ numpy==1.26.4
 requests==2.31.0
 jsonschema==4.23.0
 streamlit==1.50.0
+pdfplumber==0.11.9
+pyarrow==21.0.0

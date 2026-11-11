@@ -34,6 +34,7 @@ MODELS = [
     "anthropic/claude-opus-4.6",
 ]
 PROTOCOL_VERSION = "scenario-blind-claim-five-v1"
+AUTHOR_PROTOCOL_VERSION = "scenario-author-message-five-v1"
 RESULT_VERSION = "scenario-result-v1"
 DEFAULT_BASE_URL = "https://litellm.data-light.ru/v1"
 

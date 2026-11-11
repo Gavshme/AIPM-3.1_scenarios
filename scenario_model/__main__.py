@@ -47,6 +47,7 @@ def main():
                     progress=lambda text: print(
                         item["card"]["id"] + ": " + text, flush=True
                     ),
+                    use_author_message=True,
                 )
                 out["results"].append(result)
                 print(

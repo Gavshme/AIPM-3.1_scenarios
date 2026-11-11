@@ -44,6 +44,15 @@ def reply(body, claim=CLAIM):
     schema = body["response_format"]["json_schema"]["schema"]
     row = default(schema["properties"]["ratings"]["items"])
     row["id"] = card["id"]
+    if "message_text" in card:
+        return {"ratings": [{
+            "id": card["id"],
+            "status": "formulated",
+            "main_claim": claim,
+            "source_quotes": [card["message_text"]],
+            "removed_metadata": [],
+            "reason": "Сохранено условие оплаты после проверки.",
+        }]}
     if "main_claim" in row:
         row["main_claim"] = card.get("fixed_main_claim", claim)
     if "role_reveal_seconds" in row:
@@ -131,6 +140,25 @@ class PipelineTests(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         self.source = read_json(ROOT / "examples/scenario.json")
         self.client = FakeClient(self.tmp.name)
+
+    def test_author_message_pipeline_and_replay(self):
+        self.source["key_idea"] = "Не включать в запрос."
+        result = evaluate_card(self.source, self.client, use_author_message=True)
+        self.assertEqual(len(self.client.calls), 16)
+        body = self.client.calls[0]["messages"][0]["content"]
+        self.assertEqual(json.loads(body.split("\nSCENARIOS:\n")[1]), [{
+            "id": self.source["id"], "message_text": self.source["message"]
+        }])
+        self.assertEqual(result["claim"]["fixed_main_claim"], CLAIM)
+        self.assertEqual(result["claim"]["source"], "author_message")
+        for body in self.client.calls[1:]:
+            text = body["messages"][0]["content"]
+            self.assertNotIn(self.source["message"], text)
+            self.assertNotIn(self.source["key_idea"], text)
+        self.assertEqual(replay_result(result), result["scoring"])
+        del self.source["message"]
+        with self.assertRaisesRegex(ValueError, "Сообщение"):
+            evaluate_card(self.source, self.client, use_author_message=True)
 
     def test_end_to_end_blind_claim_same_five_and_cached_replay(self):
         self.source.update(
@@ -259,7 +287,7 @@ class PipelineTests(unittest.TestCase):
         self.assertGreater(len(list(Path(self.tmp.name).rglob("*.json"))), 3)
 
     def test_cli_uses_cache_and_replays_without_key(self):
-        evaluate_card(self.source, self.client)
+        evaluate_card(self.source, self.client, use_author_message=True)
         input = Path(self.tmp.name) / "input.json"
         output = Path(self.tmp.name) / "output.json"
         input.write_text(json.dumps(self.source, ensure_ascii=False))

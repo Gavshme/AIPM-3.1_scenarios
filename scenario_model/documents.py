@@ -20,6 +20,11 @@ TIMECODE = rf"(?:\d+:){{0,2}}{NUMBER}"
 INTERVAL = re.compile(rf"\s*({TIMECODE})\s*[–—−-]\s*({TIMECODE})\s*(?:с\.?|сек\.?)?\s*")
 SCREEN_LABEL = re.compile(r"(?im)^\s*(?:экранный текст|текст на экране|супер)\s*:\s*")
 FINAL_SCREEN = re.compile(r"экранный текст на финальном экране\s*:\s*(.+)", re.I)
+MESSAGE = re.compile(r"сообщение(?:\s*:\s*(.*))?", re.I)
+SECTION_BOUNDARY = re.compile(
+    r"^(?:ключевая идея|сценарий|инсайт|[«„]?а вдруг[»“]?|категории|тон|хук|экранный текст)"
+    r"(?:\s*:|\s*$)", re.I
+)
 DURATION = re.compile(
     rf"(?:хронометраж|длительность)\s*:\s*({TIMECODE})\s*(?:с\.?|сек\.?)?", re.I
 )
@@ -108,9 +113,18 @@ def _document_card(blocks, name, data, *, pdf):
     columns = None
     duration = None
     final_screen = ""
+    message_parts = []
+    reading_message = False
     for block in blocks:
         if isinstance(block, str):
             line = block.strip()
+            message_heading = MESSAGE.fullmatch(line)
+            if message_heading:
+                reading_message = True
+                section = None
+                if message_heading[1]:
+                    message_parts.append(message_heading[1])
+                continue
             timing = DURATION.fullmatch(line)
             if timing:
                 duration = _seconds(timing[1])
@@ -120,6 +134,12 @@ def _document_card(blocks, name, data, *, pdf):
                 final_screen = screen[1]
                 continue
             heading = line.lower().replace("ё", "е").rstrip(":")
+            if heading in CONTEXT_HEADINGS or SECTION_BOUNDARY.match(line):
+                reading_message = False
+            if reading_message:
+                if line:
+                    message_parts.append(line)
+                continue
             if heading in CONTEXT_HEADINGS:
                 section = CONTEXT_HEADINGS[heading]
                 context.setdefault(section, [])
@@ -132,6 +152,7 @@ def _document_card(blocks, name, data, *, pdf):
                 context[section].append(line)
             continue
 
+        reading_message = False
         rows = [[(cell or "").strip() for cell in row] for row in block]
         if pdf and columns and not section and not any(
             _columns(row) or (
@@ -188,6 +209,8 @@ def _document_card(blocks, name, data, *, pdf):
         )
     card["duration_sec"] = card["scenes"][-1]["end"] if duration is None else duration
     card.update({key: "\n".join(parts) for key, parts in context.items() if parts})
+    if message_parts:
+        card["message"] = " ".join(message_parts)
     return card
 
 

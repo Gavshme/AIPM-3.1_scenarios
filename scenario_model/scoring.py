@@ -1,13 +1,17 @@
 # coding: utf-8
 import math
 import numpy as np
-from .config import FEATURES, ROOT, read_json, verify_bundle
+from .config import FEATURES, ROOT, digest, read_json, verify_bundle
 
 
 class ScenarioRidge:
-    def __init__(self):
+    def __init__(self, author_bundle=None):
         self.bundle_hash = verify_bundle()
-        self.state = read_json(ROOT / "artifacts/ridge.json")
+        if author_bundle is None:
+            self.state = read_json(ROOT / "artifacts/ridge.json")
+        else:
+            self.state = author_bundle["ridge"]
+            self.bundle_hash = digest([self.bundle_hash, author_bundle])
         if self.state["columns"] != FEATURES:
             raise ValueError("Неверный порядок признаков.")
 
