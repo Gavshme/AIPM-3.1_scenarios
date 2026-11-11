@@ -1,12 +1,14 @@
 # coding: utf-8
 import json, os
-from pathlib import Path
+from html import escape
+from jsonschema.exceptions import ValidationError
 import streamlit as st
 from scenario_model.cards import parse_cards
 from scenario_model.client import LlmClient
-from scenario_model.config import DEFAULT_BASE_URL, DEMO_FEATURE, LABELS, ROOT, digest
+from scenario_model.config import DEFAULT_BASE_URL, LABELS, ROOT, digest
 from scenario_model.documents import parse_upload
-from scenario_model.pipeline import evaluate_card, replay_result
+from scenario_model.explanations import SUMMARY_MODEL, add_summary, read_summary, short_saved_reason
+from scenario_model.pipeline import evaluate_card, explain_score, replay_result
 
 
 def setting(name, default=""):
@@ -42,91 +44,77 @@ if not key:
             base_url = st.text_input("Адрес API", value=base_url)
 
 
+CLASS_COLORS = {
+    "Высокий": ("#eaf7ee", "#166534", "#b0dbc0"),
+    "Средний": ("#fff5d5", "#804700", "#efd28b"),
+    "Низкий": ("#fff0ef", "#9c2424", "#edb4b0"),
+}
+
+
+def result_cards(result):
+    scoring = result["scoring"]
+    label = scoring["class"]
+    background, color, border = CLASS_COLORS[label]
+    st.html(f"""
+        <style>
+            .aipm-result-cards {{ display: grid; grid-template-columns: minmax(8rem, 1fr) 3fr; gap: 1rem; }}
+            .aipm-result-card {{ border: 1px solid; border-radius: 10px; padding: 1rem; overflow-wrap: anywhere; }}
+            .aipm-result-card strong {{ display: block; margin-bottom: .35rem; }}
+            @media (max-width: 600px) {{ .aipm-result-cards {{ grid-template-columns: 1fr; gap: .5rem; }} }}
+        </style>
+        <div class="aipm-result-cards">
+            <div class="aipm-result-card" style="background:{background};color:{color};border-color:{border}">
+                <strong>Скор MD</strong>
+                <div style="font-size:2rem;font-weight:700;line-height:1.15">{scoring["score"]:.1f}</div>
+                <div>{label} класс</div>
+            </div>
+            <div class="aipm-result-card" style="background:#f6f8fa;color:#202936;border-color:#dce1e7">
+                <strong>Основной посыл</strong>
+                <div>{escape(result["claim"]["fixed_main_claim"])}</div>
+            </div>
+        </div>
+    """)
+
+
 def render_results(results):
     if not results:
         return
-    st.subheader("Сравнение сценариев")
-    st.dataframe(
-        [
-            {
-                "Сценарий": r["input_card"].get("name", r["card"]["id"]),
-                "Скор MD": round(r["scoring"]["score"], 2),
-                "Класс": r["scoring"]["class"],
-            }
-            for r in sorted(results, key=lambda r: -r["scoring"]["score"])
-        ],
-        hide_index=True,
-        width="stretch",
-    )
-    for r in results:
+    st.subheader("Результаты оценки")
+    for result in sorted(results, key=lambda r: -r["scoring"]["score"]):
         with st.expander(
-            str(r["input_card"].get("name", r["card"]["id"])),
-            expanded=len(results) == 1,
+            str(result["input_card"].get("name", result["card"]["id"])),
+            expanded=True,
         ):
-            a, b = st.columns([1, 3])
-            a.metric("Скор MD", f"{r['scoring']['score']:.1f}")
-            a.write(r["scoring"]["class"])
-            features = r["scoring"]["feature_means"]
-            b.markdown("**Выделенный посыл**")
-            b.write(r["claim"]["fixed_main_claim"])
-            if r["claim"]["all_different"]:
-                st.warning(
-                    "Три прочтения дали разные формулировки посыла. По правилу выбран первый вариант; проверьте неоднозначные места сценария."
-                )
-            st.dataframe(
-                [
-                    {
-                        "Признак": LABELS[c],
-                        "Средняя оценка": round(r["scoring"]["feature_means"][c], 2),
-                        "Минимум": r["scoring"]["feature_ranges"][c][0],
-                        "Максимум": r["scoring"]["feature_ranges"][c][1],
-                    }
-                    for c in features
-                ],
-                hide_index=True,
-                width="stretch",
-            )
+            result_cards(result)
+            baseline, contributions = explain_score(result)
+            means = result["scoring"]["feature_means"]
+            rows = []
+            for feature, value in means.items():
+                delta = round(contributions[feature], 2)
+                rows.append({
+                    "Признак": LABELS[feature],
+                    "Оценка": f"{value:.2f}".rstrip("0").rstrip("."),
+                    "Вклад в MD": f"{delta:+.2f}".replace("-", "−") if delta else "0",
+                })
+            st.dataframe(rows, hide_index=True, width="stretch")
             st.caption(
-                "Минимум и максимум — исходные оценки пяти AI-моделей, не доверительный интервал ответов зрителей."
+                f"Вклад в пунктах MD относительно базового скора {baseline:.2f}. "
+                "Плюс повышает итоговый скор, минус снижает."
             )
-            with st.expander("Как был определён посыл"):
-                for i, (text, evidence) in enumerate(
-                    zip(r["claim"]["readings"], r["claim_evidence"])
-                ):
-                    label = "Из раздела «Сообщение»" if r["claim"].get("source") else f"Прочтение {i+1}"
-                    st.markdown(f"**{label}**")
-                    st.write(text)
-                    st.caption(evidence)
-                if "function_demo_target" in r:
-                    st.markdown("**Предложение для проверки показа функции**")
-                    st.write(r["function_demo_target"])
-            with st.expander("Обоснования оценок"):
-                for assessor in r["assessors"]:
-                    st.markdown("### " + assessor["model"].split("/")[-1])
-                    ratings = assessor["ratings"]
-                    for c in features:
-                        st.markdown(
-                            "**"
-                            + LABELS[c]
-                            + " · "
-                            + str(assessor["features"][c])
-                            + "**"
-                        )
-                        if c == "panel__distinct_benefit_count":
-                            st.write(ratings["benefits"]["assessment_reason"])
-                            for candidate in ratings["benefits"]["candidates"]:
-                                st.write("«" + candidate["quote"] + "»")
-                                st.caption(candidate["decision_reason"])
-                        elif c == "panel__content_precision":
-                            st.write(ratings["precision"]["reason"])
-                            st.caption(ratings["precision"]["evidence"])
-                        elif c == DEMO_FEATURE:
-                            demo = ratings["function_demo"]
-                            st.write(demo["evidence"])
-                            if demo["scenes"]:
-                                st.caption("Сцены " + ", ".join(map(str, demo["scenes"])))
-                        else:
-                            st.write(ratings["common"]["evidence"][c])
+            try:
+                summary = read_summary(result)
+            except (ValidationError, ValueError, TypeError, KeyError):
+                summary = {}
+            st.markdown("**Почему признаки получили такие оценки**")
+            if not summary:
+                st.caption("Сводка AI недоступна. Показано по одному сохранённому обоснованию на признак.")
+            for feature in means:
+                row = summary.get(feature)
+                conclusion = row["conclusion"] if row else short_saved_reason(result, feature)
+                st.markdown(f"**{LABELS[feature]}**")
+                st.text(conclusion or "Обоснование отсутствует.")
+                if row and row["quote"]:
+                    st.caption("В сценарии: «" + row["quote"] + "»")
 
 
 new_tab, saved_tab = st.tabs(["Оценить сценарии", "Открыть результат"])
@@ -194,14 +182,18 @@ with new_tab:
             for item in cards:
                 with st.status("Оценивается " + item["name"], expanded=False) as status:
                     try:
-                        results.append(
-                            evaluate_card(
-                                item["original"],
-                                client,
-                                progress=lambda text: status.update(label=text),
-                                use_function_demo=True,
-                            )
+                        result = evaluate_card(
+                            item["original"],
+                            client,
+                            progress=lambda text: status.update(label=text),
+                            use_function_demo=True,
                         )
+                        status.update(label="Готовится общее объяснение по признакам.")
+                        try:
+                            add_summary(result, client, setting("SCENARIO_SUMMARY_MODEL", SUMMARY_MODEL))
+                        except (ValidationError, RuntimeError, ValueError, TypeError, KeyError, OSError):
+                            pass
+                        results.append(result)
                         status.update(
                             label=item["name"] + " — готово", state="complete"
                         )

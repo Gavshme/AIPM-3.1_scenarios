@@ -39,6 +39,13 @@ def default(schema):
 
 def reply(body, claim=CLAIM):
     text = body["messages"][0]["content"]
+    if body["response_format"]["json_schema"]["name"] == "feature_summary":
+        summary_input = json.loads(text.split("\n\n", 1)[1])
+        return {"features": [
+            {"feature": row["feature"], "conclusion": "Сводный вывод.",
+             "quote": summary_input["scenes"][0]["visual"]}
+            for row in summary_input["features"]
+        ]}
     marker = "\nSCENARIOS:\n" if "\nSCENARIOS:\n" in text else "\nСценарии:\n"
     card = json.loads(text.split(marker)[1])[0]
     schema = body["response_format"]["json_schema"]["schema"]

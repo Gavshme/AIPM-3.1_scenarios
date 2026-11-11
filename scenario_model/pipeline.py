@@ -166,6 +166,16 @@ def evaluate_card(source, client, progress=None, *, use_author_message=False, us
     }
 
 
+def explain_score(result):
+    version = result["protocol_version"]
+    bundle, _, _ = _claim_plan(
+        result["input_card"],
+        version in {AUTHOR_PROTOCOL_VERSION, DEMO_PROTOCOL_VERSION},
+        version == DEMO_PROTOCOL_VERSION,
+    )
+    return ScenarioRidge(bundle).feature_contributions(result["scoring"]["model_inputs"])
+
+
 def replay_result(result):
     source = result["input_card"]
     card, ignored = normalize_card(source)

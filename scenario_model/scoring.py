@@ -77,3 +77,27 @@ class ScenarioRidge:
                 for c in self.columns
             },
         }
+
+    def feature_contributions(self, rows):
+        """Explain the mean MD in score points relative to the training medians."""
+        reference = dict(zip(self.columns, self.state["median"]))
+        n = len(self.columns)
+        hybrids = [
+            {
+                column: row[column] if mask & (1 << i) else reference[column]
+                for i, column in enumerate(self.columns)
+            }
+            for mask in range(1 << n)
+            for row in rows
+        ]
+        values = self.predict(hybrids).reshape(-1, len(rows)).mean(axis=1) * 100
+        weights = [1 / (n * math.comb(n - 1, k)) for k in range(n)]
+        contributions = {}
+        for i, column in enumerate(self.columns):
+            bit = 1 << i
+            contributions[column] = sum(
+                weights[bin(mask).count("1")] * (values[mask | bit] - values[mask])
+                for mask in range(1 << n)
+                if not mask & bit
+            )
+        return float(values[0]), contributions
