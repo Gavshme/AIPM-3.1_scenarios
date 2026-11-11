@@ -4,7 +4,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import numpy as np
 from .cards import normalize_card
 from .config import (
-    AUTHOR_PROTOCOL_VERSION, DEMO_FEATURE, DEMO_PROTOCOL_VERSION, MODELS,
+    AUTHOR_PROTOCOL_VERSION, DEMO_FEATURE, DEMO_PROTOCOL_VERSION,
+    FULL_CLAIM_PROTOCOL_VERSION, FUNCTION_DEMO_PROTOCOLS, MODELS,
     PROTOCOL_VERSION, RESULT_VERSION, ROOT, digest, read_json,
 )
 from .protocol import protocols, request_body, validate_stage, select_claim
@@ -94,18 +95,6 @@ def evaluate_card(source, client, progress=None, *, use_author_message=False, us
         notes.extend(nn)
     selection = _claim_selection(claim_rows, use_author_message)
     claim = selection["fixed_main_claim"]
-    demo_target = None
-    if demo_bundle:
-        emit("Уточняется предложение для проверки показа функции.")
-        spec = demo_bundle["demo_target"]
-        row, nn, obs = client.observe(
-            request_body(spec, card, claim),
-            "demo_target/1",
-            lambda data: validate_stage("demo_target", spec, card, data, claim),
-        )
-        demo_target = row["target"].strip()
-        observations.append(obs)
-        notes.extend(nn)
     emit(f"Посыл зафиксирован. Оценка {len(scorer.columns)} признаков пятью моделями.")
 
     def assess(a):
@@ -113,7 +102,7 @@ def evaluate_card(source, client, progress=None, *, use_author_message=False, us
         obs_all = []
         normalizations = []
         for stage, spec in _assessor_stages(a, demo_bundle).items():
-            body = request_body(spec, card, claim, demo_target=demo_target)
+            body = request_body(spec, card, claim, demo_target=claim)
             row, nn, obs = client.observe(
                 body,
                 a["model"] + "/" + stage,
@@ -146,7 +135,7 @@ def evaluate_card(source, client, progress=None, *, use_author_message=False, us
     return {
         "format": RESULT_VERSION,
         "protocol_version": (
-            DEMO_PROTOCOL_VERSION if use_function_demo
+            FULL_CLAIM_PROTOCOL_VERSION if use_function_demo
             else AUTHOR_PROTOCOL_VERSION if use_author_message
             else PROTOCOL_VERSION
         ),
@@ -158,7 +147,7 @@ def evaluate_card(source, client, progress=None, *, use_author_message=False, us
         "ignored_fields": ignored,
         "claim": selection,
         "claim_evidence": [r["evidence"] for r in claim_rows],
-        **({"function_demo_target": demo_target} if demo_bundle else {}),
+        **({"function_demo_target": claim} if demo_bundle else {}),
         "assessors": assessed,
         "scoring": scoring,
         "observations": observations,
@@ -168,10 +157,11 @@ def evaluate_card(source, client, progress=None, *, use_author_message=False, us
 
 def explain_score(result):
     version = result["protocol_version"]
+    use_function_demo = version in FUNCTION_DEMO_PROTOCOLS
     bundle, _, _ = _claim_plan(
         result["input_card"],
-        version in {AUTHOR_PROTOCOL_VERSION, DEMO_PROTOCOL_VERSION},
-        version == DEMO_PROTOCOL_VERSION,
+        use_function_demo or version == AUTHOR_PROTOCOL_VERSION,
+        use_function_demo,
     )
     return ScenarioRidge(bundle).feature_contributions(result["scoring"]["model_inputs"])
 
@@ -180,8 +170,9 @@ def replay_result(result):
     source = result["input_card"]
     card, ignored = normalize_card(source)
     version = result.get("protocol_version")
-    use_function_demo = version == DEMO_PROTOCOL_VERSION
-    use_author_message = version in {AUTHOR_PROTOCOL_VERSION, DEMO_PROTOCOL_VERSION}
+    use_function_demo = version in FUNCTION_DEMO_PROTOCOLS
+    has_separate_demo_target = version == DEMO_PROTOCOL_VERSION
+    use_author_message = use_function_demo or version == AUTHOR_PROTOCOL_VERSION
     bundle, message, claim_plan = _claim_plan(source, use_author_message, use_function_demo)
     demo_bundle = bundle if use_function_demo else None
     scorer = ScenarioRidge(bundle)
@@ -190,7 +181,7 @@ def replay_result(result):
     p = protocols()
     if (
         result.get("format") != RESULT_VERSION
-        or version not in {PROTOCOL_VERSION, AUTHOR_PROTOCOL_VERSION, DEMO_PROTOCOL_VERSION}
+        or version not in {PROTOCOL_VERSION, AUTHOR_PROTOCOL_VERSION, *FUNCTION_DEMO_PROTOCOLS}
         or result.get("bundle_hash") != scorer.bundle_hash
         or result.get("model_id") != scorer.state["model_id"]
         or result.get("card") != card
@@ -199,7 +190,7 @@ def replay_result(result):
         raise ValueError("Несовместимый или изменённый результат.")
     observations = result.get("observations", [])
     expected_count = (
-        len(claim_plan) + int(use_function_demo)
+        len(claim_plan) + int(has_separate_demo_target)
         + sum(len(_assessor_stages(a, demo_bundle)) for a in p["assessors"])
     )
     if len(observations) != expected_count:
@@ -226,10 +217,11 @@ def replay_result(result):
         raise ValueError("Список исключённых авторских полей изменён.")
     demo_target = None
     if demo_bundle:
-        demo_target = read(
-            "demo_target", demo_bundle["demo_target"], "demo_target/1",
-            selection["fixed_main_claim"],
-        )["target"].strip()
+        demo_target = selection["fixed_main_claim"]
+        if has_separate_demo_target:
+            demo_target = read(
+                "demo_target", demo_bundle["demo_target"], "demo_target/1", demo_target
+            )["target"].strip()
         if demo_target != result.get("function_demo_target"):
             raise ValueError("Изменено предложение для оценки показа функции.")
     assessed = []

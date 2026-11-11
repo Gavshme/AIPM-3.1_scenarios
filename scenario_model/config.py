@@ -39,6 +39,8 @@ MODELS = [
 PROTOCOL_VERSION = "scenario-blind-claim-five-v1"
 AUTHOR_PROTOCOL_VERSION = "scenario-author-message-five-v1"
 DEMO_PROTOCOL_VERSION = "scenario-author-message-function-demo-five-v1"
+FULL_CLAIM_PROTOCOL_VERSION = "scenario-author-message-function-demo-full-claim-five-v1"
+FUNCTION_DEMO_PROTOCOLS = {DEMO_PROTOCOL_VERSION, FULL_CLAIM_PROTOCOL_VERSION}
 RESULT_VERSION = "scenario-result-v1"
 DEFAULT_BASE_URL = "https://litellm.data-light.ru/v1"
 

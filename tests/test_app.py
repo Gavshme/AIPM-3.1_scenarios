@@ -55,7 +55,7 @@ class AppTests(unittest.TestCase):
             self.assertIn(f"{result['scoring']['score']:.1f}", at.get("html")[0].proto.body)
             self.assertEqual(sum(x.value == "Сводный вывод." for x in at.text), 8)
             self.assertEqual(sum("В сценарии" in x.value for x in at.caption), 8)
-            self.assertEqual(len(fake.calls), 23)
+            self.assertEqual(len(fake.calls), 22)
             self.assertTrue(
                 any("Показ ключевой функции сервиса/продукта" in x.value for x in at.markdown)
             )

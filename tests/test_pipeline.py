@@ -3,7 +3,10 @@ import copy, json, tempfile, unittest, subprocess, sys, threading
 from pathlib import Path
 from unittest.mock import patch
 import numpy as np
-from scenario_model.config import ROOT, FEATURES, MODELS, canonical, read_json
+from scenario_model.config import (
+    ROOT, FEATURES, MODELS, DEMO_PROTOCOL_VERSION, FULL_CLAIM_PROTOCOL_VERSION,
+    canonical, read_json,
+)
 from scenario_model.cards import normalize_card, parse_cards, claim_input
 from scenario_model.client import LlmClient, MissingObservation, ProviderError
 from scenario_model.pipeline import evaluate_card, replay_result
@@ -172,26 +175,24 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Сообщение"):
             evaluate_card(self.source, self.client, use_author_message=True)
 
-    def test_demo_uses_one_shared_target_and_only_visual_scenes(self):
+    def test_demo_uses_full_claim_and_only_visual_scenes(self):
         result = evaluate_card(self.source, self.client, use_function_demo=True)
-        self.assertEqual(len(self.client.calls), 22)
-        target = result["function_demo_target"]
+        self.assertEqual(len(self.client.calls), 21)
+        self.assertEqual(result["protocol_version"], FULL_CLAIM_PROTOCOL_VERSION)
+        self.assertEqual(result["function_demo_target"], CLAIM)
         requests = {o["slot"]: o["request"] for o in result["observations"]}
 
         def card_from_request(slot):
             text = requests[slot]["messages"][0]["content"]
             return json.loads(text.split("\nSCENARIOS:\n")[1])[0]
 
-        self.assertEqual(
-            card_from_request("demo_target/1"),
-            {"id": self.source["id"], "fixed_main_claim": CLAIM},
-        )
+        self.assertNotIn("demo_target/1", requests)
         for assessor in result["assessors"]:
             self.assertEqual(
                 card_from_request(assessor["model"] + "/function_demo"),
                 {
                     "id": self.source["id"],
-                    "target": target,
+                    "target": CLAIM,
                     "scenes": [
                         {"visual": scene["visual"]} for scene in self.source["scenes"]
                     ],
@@ -200,6 +201,22 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(
                 assessor["features"]["panel__key_service_function_demonstration"], 2
             )
+        self.assertEqual(replay_result(result), result["scoring"])
+        result["function_demo_target"] = "Другой посыл"
+        with self.assertRaisesRegex(ValueError, "Изменено предложение"):
+            replay_result(result)
+
+    def test_replay_previous_demo_protocol_with_separate_target_observation(self):
+        result = evaluate_card(self.source, self.client, use_function_demo=True)
+        spec = read_json(ROOT / "artifacts/function_demo.json")["demo_target"]
+        card = result["card"]
+        _, _, observation = self.client.observe(
+            request_body(spec, card, CLAIM),
+            "demo_target/1",
+            lambda data: validate_stage("demo_target", spec, card, data, CLAIM),
+        )
+        result["observations"].insert(1, observation)
+        result["protocol_version"] = DEMO_PROTOCOL_VERSION
         self.assertEqual(replay_result(result), result["scoring"])
 
     def test_end_to_end_blind_claim_same_five_and_cached_replay(self):
