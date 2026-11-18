@@ -88,6 +88,8 @@ def render_results(results):
             expanded=True,
         ):
             result_cards(result)
+            if result.get("assessor_fallback"):
+                st.info("Рассчитано по трём оценщикам без Opus: он не вернул полный набор оценок.")
             baseline, contributions = explain_score(result)
             means = result["scoring"]["feature_means"]
             rows = []

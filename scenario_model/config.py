@@ -47,9 +47,13 @@ FULL_CLAIM_PROTOCOL_VERSION = "scenario-author-message-function-demo-full-claim-
 FOUR_ASSESSOR_PROTOCOL_VERSION = "scenario-author-message-function-demo-full-claim-four-v1"
 ORDINAL_CLASS_PROTOCOL_VERSION = "scenario-author-message-function-demo-full-claim-four-ordinal-v1"
 NUSVR_PROTOCOL_VERSION = "scenario-nusvr9-joint-ordinal8-four-20261118-v1"
+NUSVR_NO_OPUS_PROTOCOL_VERSION = "scenario-nusvr9-joint-ordinal8-three-no-opus-20261118-v1"
+OPTIONAL_OPUS_MODEL = "anthropic/claude-opus-4.6"
+NUSVR_PROTOCOLS = {NUSVR_PROTOCOL_VERSION, NUSVR_NO_OPUS_PROTOCOL_VERSION}
 FOUR_ASSESSOR_PROTOCOLS = {FOUR_ASSESSOR_PROTOCOL_VERSION, ORDINAL_CLASS_PROTOCOL_VERSION, NUSVR_PROTOCOL_VERSION}
 FUNCTION_DEMO_PROTOCOLS = {
     DEMO_PROTOCOL_VERSION, FULL_CLAIM_PROTOCOL_VERSION, *FOUR_ASSESSOR_PROTOCOLS,
+    NUSVR_NO_OPUS_PROTOCOL_VERSION,
 }
 RESULT_VERSION = "scenario-result-v1"
 DEFAULT_BASE_URL = "https://litellm.data-light.ru/v1"

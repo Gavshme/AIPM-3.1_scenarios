@@ -7,11 +7,12 @@ from .classification import classify_features
 from .config import (
     ACTIVE_MODELS, AUTHOR_PROTOCOL_VERSION, DEMO_FEATURE, DEMO_PROTOCOL_VERSION,
     FOUR_ASSESSOR_PROTOCOLS, FUNCTION_DEMO_PROTOCOLS, MODELS, ORDINAL_CLASS_PROTOCOL_VERSION,
-    NUSVR_PROTOCOL_VERSION, ROLE_FEATURE, PROTOCOL_VERSION, RESULT_VERSION, ROOT, digest, read_json,
+    NUSVR_PROTOCOL_VERSION, NUSVR_NO_OPUS_PROTOCOL_VERSION, NUSVR_PROTOCOLS,
+    OPTIONAL_OPUS_MODEL, ROLE_FEATURE, PROTOCOL_VERSION, RESULT_VERSION, ROOT, digest, read_json,
 )
 from .protocol import protocols, request_body, validate_stage, select_claim
 from .scoring import ScenarioRidge, ScenarioNuSVR
-from .client import LlmClient
+from .client import LlmClient, MissingObservation, ProviderError
 
 
 def _features(common, precision, benefits, function_demo=None, role_inputs=None):
@@ -83,8 +84,8 @@ def _assessor_plan(models):
 
 def _score_result(scorer, assessed, assessor_count, version):
     scoring = scorer.summarize([a["features"] for a in assessed], assessor_count=assessor_count)
-    if version in {ORDINAL_CLASS_PROTOCOL_VERSION, NUSVR_PROTOCOL_VERSION}:
-        classification = classify_features(scoring["feature_means"], joint=version == NUSVR_PROTOCOL_VERSION)
+    if version in {ORDINAL_CLASS_PROTOCOL_VERSION, *NUSVR_PROTOCOLS}:
+        classification = classify_features(scoring["feature_means"], joint=version in NUSVR_PROTOCOLS)
         scoring["classification"] = classification
         scoring["class"] = classification["class"]
     return scoring
@@ -147,16 +148,35 @@ def evaluate_card(source, client, progress=None, *, use_author_message=False, us
         }
 
     assessed = [None] * assessor_count
+    opus_fallback = None
     with ThreadPoolExecutor(max_workers=assessor_count) as pool:
         pending = {pool.submit(assess, a): i for i, a in enumerate(assessors)}
-        for count, future in enumerate(as_completed(pending), start=1):
-            assessed[pending[future]] = future.result()
-            emit(f"Готово оценщиков: {count} из {assessor_count}.")
+        for future in as_completed(pending):
+            index = pending[future]
+            try:
+                assessed[index] = future.result()
+            except (ProviderError, MissingObservation) as exc:
+                if not use_nusvr or assessors[index]["model"] != OPTIONAL_OPUS_MODEL:
+                    raise
+                opus_fallback = {
+                    "omitted_model": OPTIONAL_OPUS_MODEL,
+                    "reason": "missing_cached_observation" if isinstance(exc, MissingObservation) else "provider_error",
+                    "assessor_count": 3,
+                }
+                emit("Opus недоступен. Расчёт будет выполнен по трём оценщикам.")
+            else:
+                emit(f"Готово оценщиков: {sum(a is not None for a in assessed)} из {assessor_count}.")
+    assessed = [a for a in assessed if a is not None]
+    if opus_fallback:
+        if [a["model"] for a in assessed] != [m for m in ACTIVE_MODELS if m != OPTIONAL_OPUS_MODEL]:
+            raise ValueError("Для расчёта без Opus нужны все три остальных оценщика.")
+        assessor_count = len(assessed)
     for a in assessed:
         observations.extend(a.pop("observations"))
         notes.extend(a.pop("normalizations"))
     version = (
-        NUSVR_PROTOCOL_VERSION if use_nusvr else ORDINAL_CLASS_PROTOCOL_VERSION if use_function_demo
+        NUSVR_NO_OPUS_PROTOCOL_VERSION if opus_fallback else NUSVR_PROTOCOL_VERSION if use_nusvr
+        else ORDINAL_CLASS_PROTOCOL_VERSION if use_function_demo
         else AUTHOR_PROTOCOL_VERSION if use_author_message
         else PROTOCOL_VERSION
     )
@@ -178,6 +198,7 @@ def evaluate_card(source, client, progress=None, *, use_author_message=False, us
         "scoring": scoring,
         "observations": observations,
         "normalization_notes": notes,
+        **({"assessor_fallback": opus_fallback} if opus_fallback else {}),
     }
 
 
@@ -189,7 +210,7 @@ def explain_score(result):
         use_function_demo or version == AUTHOR_PROTOCOL_VERSION,
         use_function_demo,
     )
-    scorer = ScenarioNuSVR() if version == NUSVR_PROTOCOL_VERSION else ScenarioRidge(bundle)
+    scorer = ScenarioNuSVR() if version in NUSVR_PROTOCOLS else ScenarioRidge(bundle)
     return scorer.feature_contributions(result["scoring"]["model_inputs"])
 
 
@@ -197,7 +218,7 @@ def replay_result(result):
     source = result["input_card"]
     card, ignored = normalize_card(source)
     version = result.get("protocol_version")
-    use_nusvr = version == NUSVR_PROTOCOL_VERSION
+    use_nusvr = version in NUSVR_PROTOCOLS
     use_function_demo = version in FUNCTION_DEMO_PROTOCOLS
     has_separate_demo_target = version == DEMO_PROTOCOL_VERSION
     use_author_message = use_function_demo or version == AUTHOR_PROTOCOL_VERSION
@@ -206,7 +227,22 @@ def replay_result(result):
     scorer = ScenarioNuSVR() if use_nusvr else ScenarioRidge(bundle)
     if use_author_message:
         ignored.remove("message")
-    assessors = _assessor_plan(ACTIVE_MODELS if version in FOUR_ASSESSOR_PROTOCOLS else MODELS)
+    if version == NUSVR_NO_OPUS_PROTOCOL_VERSION:
+        fallback = result.get("assessor_fallback")
+        if (
+            not isinstance(fallback, dict)
+            or fallback.keys() != {"omitted_model", "reason", "assessor_count"}
+            or fallback["omitted_model"] != OPTIONAL_OPUS_MODEL
+            or fallback["reason"] not in {"provider_error", "missing_cached_observation"}
+            or type(fallback["assessor_count"]) is not int or fallback["assessor_count"] != 3
+        ):
+            raise ValueError("Неверная отметка о расчёте без Opus.")
+        models = [m for m in ACTIVE_MODELS if m != OPTIONAL_OPUS_MODEL]
+    else:
+        if "assessor_fallback" in result:
+            raise ValueError("Отметка о расчёте без Opus не соответствует протоколу.")
+        models = ACTIVE_MODELS if version in FOUR_ASSESSOR_PROTOCOLS else MODELS
+    assessors = _assessor_plan(models)
     if (
         result.get("format") != RESULT_VERSION
         or version not in {PROTOCOL_VERSION, AUTHOR_PROTOCOL_VERSION, *FUNCTION_DEMO_PROTOCOLS}
@@ -273,7 +309,7 @@ def replay_result(result):
     stored = result["scoring"]
     if scoring["class"] != stored["class"]:
         raise ValueError("Класс не совпадает с пересчётом.")
-    if version in {ORDINAL_CLASS_PROTOCOL_VERSION, NUSVR_PROTOCOL_VERSION}:
+    if version in {ORDINAL_CLASS_PROTOCOL_VERSION, *NUSVR_PROTOCOLS}:
         expected = scoring["classification"]
         actual = stored.get("classification")
         if (

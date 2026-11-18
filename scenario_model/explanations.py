@@ -61,7 +61,7 @@ def summary_request(result, model):
             for feature in result["scoring"]["feature_means"]
         ],
     }
-    count_word = "четырёх" if len(result["assessors"]) == 4 else "пяти"
+    count_word = {3: "трёх", 4: "четырёх", 5: "пяти"}[len(result["assessors"])]
     prompt = (
         "Подготовь для менеджера один общий вывод по каждому признаку на основе "
         f"{count_word} оценок. Верни каждый переданный идентификатор признака один раз. "
