@@ -12,6 +12,9 @@ from scenario_model.explanations import (
     final_comment, read_summary,
 )
 from scenario_model.pipeline import evaluate_card, explain_score, replay_result
+from scenario_model.visualization import contribution_chart
+
+MAX_SCENARIOS_PER_BATCH = 20
 
 
 def setting(name, default=""):
@@ -95,15 +98,8 @@ def render_results(results):
                 st.info("Рассчитано по трём оценщикам без Opus: он не вернул полный набор оценок.")
             baseline, contributions = explain_score(result)
             means = result["scoring"]["feature_means"]
-            rows = []
-            for feature, value in means.items():
-                delta = round(contributions[feature], 2)
-                rows.append({
-                    "Признак": LABELS[feature],
-                    "Оценка": f"{value:.2f}".rstrip("0").rstrip("."),
-                    "Вклад в MD": f"{delta:+.2f}".replace("-", "−") if delta else "0",
-                })
-            st.dataframe(rows, hide_index=True, width="stretch")
+            st.markdown("**Что повышает и снижает MD**")
+            st.vega_lite_chart(contribution_chart(means, contributions), use_container_width=True, theme=None)
             st.caption(
                 f"Вклад в пунктах MD относительно базового скора {baseline:.2f}. "
                 "Плюс повышает итоговый скор, минус снижает."
@@ -145,6 +141,7 @@ with new_tab:
         "- **Креативные приёмы** — описание использованных приёмов.\n"
         "- **Сообщение** — главный посыл: что предлагает продукт или сервис и какую пользу он даёт."
     )
+    st.caption(f"За один запуск можно загрузить не больше {MAX_SCENARIOS_PER_BATCH} сценариев.")
     files = st.file_uploader(
         "Файлы сценариев",
         type=["docx", "pdf", "json"],
@@ -169,8 +166,8 @@ with new_tab:
             cards.extend(parse_cards(pasted))
         if len({x["card"]["id"] for x in cards}) != len(cards):
             raise ValueError("В загрузке повторяются id карточек.")
-        if len(cards) > 100:
-            raise ValueError("За один раз можно оценить не больше 100 карточек.")
+        if len(cards) > MAX_SCENARIOS_PER_BATCH:
+            raise ValueError(f"За один раз можно загрузить не больше {MAX_SCENARIOS_PER_BATCH} сценариев.")
     except Exception as exc:
         error = str(exc)
         st.error(error)

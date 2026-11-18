@@ -9,6 +9,22 @@ from test_pipeline import FakeClient
 
 
 class AppTests(unittest.TestCase):
+    def test_batch_limit_allows_20_and_blocks_21_before_api_calls(self):
+        source = read_json(ROOT / "examples/scenario.json")
+        with patch("requests.post", side_effect=AssertionError("Unexpected network")) as post:
+            at = AppTest.from_file(str(ROOT / "app.py")).run(timeout=20)
+            self.assertTrue(any("не больше 20 сценариев" in c.value for c in at.caption))
+            for count in (20, 21):
+                cards = [{**copy.deepcopy(source), "id": f"batch-{i}"} for i in range(count)]
+                at.text_area[0].set_value(json.dumps(cards, ensure_ascii=False)).run()
+                self.assertEqual(len(at.exception), 0)
+                buttons = [b for b in at.button if b.label in {"Оценить сценарии", "Рассчитать из сохранённых ответов"}]
+                self.assertEqual([b.disabled for b in buttons], [count > 20, count > 20])
+                self.assertEqual(len(at.error), int(count > 20))
+                if count > 20:
+                    self.assertIn("не больше 20 сценариев", at.error[0].value)
+            post.assert_not_called()
+
     def test_opening_and_entering_json_does_not_call_api(self):
         with patch(
             "requests.post", side_effect=AssertionError("Unexpected network")
@@ -54,8 +70,8 @@ class AppTests(unittest.TestCase):
             self.assertTrue(evaluate.call_args.kwargs["use_function_demo"])
             self.assertTrue(evaluate.call_args.kwargs["use_nusvr"])
             post.assert_not_called()
-            self.assertEqual(len(at.dataframe), 1)
-            self.assertEqual(len(at.dataframe[0].value), 9)
+            self.assertEqual(len(at.dataframe), 0)
+            self.assertEqual(len(at.get("arrow_vega_lite_chart")), 1)
             self.assertIn("Основной посыл", at.get("html")[0].proto.body)
             self.assertIn("Класс по признакам сценария", at.get("html")[0].proto.body)
             self.assertIn(f"{result['scoring']['classification']['class']} класс", at.get("html")[0].proto.body)

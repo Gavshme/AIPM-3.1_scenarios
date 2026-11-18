@@ -154,7 +154,8 @@ class OpusFallbackTests(unittest.TestCase):
             next(b for b in at.button if b.label == 'Оценить сценарии').click().run(timeout=20)
             self.assertEqual(len(at.exception), 0)
             self.assertEqual(len(at.error), 0)
-            self.assertEqual(len(at.dataframe[0].value), 9)
+            self.assertEqual(len(at.dataframe), 0)
+            self.assertEqual(len(at.get('arrow_vega_lite_chart')), 1)
             self.assertTrue(any('трём оценщикам без Opus' in item.value for item in at.info))
             self.assertEqual(sum(x.value == 'Сводный вывод.' for x in at.text), 9)
 
