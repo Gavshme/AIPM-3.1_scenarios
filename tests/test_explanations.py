@@ -5,7 +5,7 @@ import unittest
 
 from scenario_model.config import NUSVR_FEATURES, ROOT, read_json
 from scenario_model.explanations import (
-    FEATURE_DESCRIPTIONS, LEGACY_SLOT, SLOT, add_summary, clean_final_comment,
+    FEATURE_DESCRIPTIONS, LEGACY_SLOT, PREVIOUS_SLOT, SLOT, add_summary, clean_final_comment,
     contribution_display, final_comment, read_summary, summary_request, validate_summary,
 )
 from scenario_model.pipeline import evaluate_card, replay_result
@@ -37,6 +37,7 @@ class ExplanationTests(unittest.TestCase):
         self.assertIn('один итоговый комментарий', prompt)
         self.assertIn('Не упоминай разногласия', prompt)
         self.assertNotIn('кратко назови его причину', prompt)
+        self.assertIn('Анализируется текст сценария', prompt)
         for row in json.loads(serialized)['features']:
             self.assertEqual(row['mean_score'], self.result['scoring']['feature_means'][row['feature']])
 
@@ -56,6 +57,29 @@ class ExplanationTests(unittest.TestCase):
         self.assertTrue(text)
         self.assertNotIn('Оценщики', text)
         self.assertEqual(clean_final_comment('Механика оплаты описана неоднозначно.'), 'Механика оплаты описана неоднозначно.')
+
+    def test_media_wording_is_replaced_in_comments_but_not_physical_objects(self):
+        for original, expected in [
+            ('В ролике показаны покупатели.', 'В сценарии показаны покупатели.'),
+            ('В данном ролике показан выбор.', 'В данном сценарии показан выбор.'),
+            ('В видеоролике показано действие.', 'В сценарии показано действие.'),
+            ('В видео показана скидка.', 'В сценарии показана скидка.'),
+            ('Ролик показывает доставку.', 'Сценарий показывает доставку.'),
+            ('Из ролика понятна роль сервиса.', 'Из сценария понятна роль сервиса.'),
+            ('Покупатель выбирает малярный ролик.', 'Покупатель выбирает малярный ролик.'),
+        ]:
+            with self.subTest(original=original):
+                self.assertEqual(clean_final_comment(original), expected)
+
+    def test_previous_summary_slot_still_verifies_without_changing_saved_text(self):
+        result = copy.deepcopy(self.result)
+        body = summary_request(result, 'previous-summary-model', scenario_wording=False)
+        self.assertNotIn('Анализируется текст сценария', body['messages'][0]['content'])
+        _, _, observation = self.client.observe(body, PREVIOUS_SLOT, lambda payload: validate_summary(result, payload))
+        result['summary_observation'] = observation
+        before = copy.deepcopy(result)
+        self.assertEqual(len(read_summary(result)), 9)
+        self.assertEqual(result, before)
 
     def test_legacy_summaries_still_verify_without_new_api_calls(self):
         result = copy.deepcopy(self.result)
