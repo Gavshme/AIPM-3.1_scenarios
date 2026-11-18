@@ -7,7 +7,10 @@ from scenario_model.cards import parse_cards
 from scenario_model.client import LlmClient
 from scenario_model.config import DEFAULT_BASE_URL, LABELS, ROOT, digest
 from scenario_model.documents import parse_upload
-from scenario_model.explanations import SUMMARY_MODEL, add_summary, read_summary, short_saved_reason
+from scenario_model.explanations import (
+    FEATURE_DESCRIPTIONS, SUMMARY_MODEL, add_summary, contribution_display,
+    final_comment, read_summary,
+)
 from scenario_model.pipeline import evaluate_card, explain_score, replay_result
 
 
@@ -114,17 +117,33 @@ def render_results(results):
                 st.caption("Сводка AI недоступна. Показано по одному сохранённому обоснованию на признак.")
             for feature in means:
                 row = summary.get(feature)
-                conclusion = row["conclusion"] if row else short_saved_reason(result, feature)
-                st.markdown(f"**{LABELS[feature]}**")
-                st.text(conclusion or "Обоснование отсутствует.")
-                if row and row["quote"]:
-                    st.caption("В сценарии: «" + row["quote"] + "»")
+                conclusion = final_comment(result, feature, row["conclusion"] if row else "")
+                label, color, number = contribution_display(contributions[feature])
+                with st.container(border=True):
+                    title, impact = st.columns([3, 2])
+                    title.markdown(f"**{LABELS[feature]}**")
+                    impact.markdown(f":{color}[**{label} · {number} п.п. MD**]")
+                    st.caption("Что оцениваем: " + FEATURE_DESCRIPTIONS[feature])
+                    value = f"{means[feature]:.2f}".rstrip("0").rstrip(".")
+                    st.markdown(f"Средняя оценка: **{value}**")
+                    st.text(conclusion or "Обоснование отсутствует.")
+                    if row and row["quote"]:
+                        st.caption("В сценарии: «" + row["quote"] + "»")
 
 
 new_tab, saved_tab = st.tabs(["Оценить сценарии", "Открыть результат"])
 with new_tab:
     st.write(
         "Загрузите полные сценарии в DOCX или PDF с таблицей сцен и разделом «Сообщение»."
+    )
+    st.markdown(
+        "**Требования к файлу для корректного расчёта**\n\n"
+        "Добавьте следующие разделы:\n\n"
+        "- **Сценарий** — таблица сцен с таймингами, изображением, репликами и экранным текстом.\n"
+        "- **Голос и Музыка** — описание голоса, озвучки и музыкального сопровождения.\n"
+        "- **Звуковой дизайн** — описание звуковых эффектов.\n"
+        "- **Креативные приёмы** — описание использованных приёмов.\n"
+        "- **Сообщение** — главный посыл: что предлагает продукт или сервис и какую пользу он даёт."
     )
     files = st.file_uploader(
         "Файлы сценариев",

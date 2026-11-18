@@ -3,7 +3,7 @@ import copy, json, tempfile, unittest
 from unittest.mock import patch
 from streamlit.testing.v1 import AppTest
 from scenario_model.config import ROOT, read_json
-from scenario_model.explanations import add_summary
+from scenario_model.explanations import FEATURE_DESCRIPTIONS, add_summary, contribution_display
 from scenario_model.pipeline import evaluate_card, explain_score
 from test_pipeline import FakeClient
 
@@ -15,6 +15,9 @@ class AppTests(unittest.TestCase):
         ) as post:
             at = AppTest.from_file(str(ROOT / "app.py")).run(timeout=20)
             self.assertEqual(len(at.exception), 0)
+            requirements = next(x.value for x in at.markdown if "Требования к файлу" in x.value)
+            for section in ["Сценарий", "Голос и Музыка", "Звуковой дизайн", "Креативные приёмы", "Сообщение"]:
+                self.assertIn(f"**{section}**", requirements)
             at.text_area[0].set_value(
                 json.dumps(
                     read_json(ROOT / "examples/scenario.json"), ensure_ascii=False
@@ -59,6 +62,16 @@ class AppTests(unittest.TestCase):
             self.assertIn(f"{result['scoring']['score']:.1f}", at.get("html")[0].proto.body)
             self.assertEqual(sum(x.value == "Сводный вывод." for x in at.text), 9)
             self.assertEqual(sum("В сценарии" in x.value for x in at.caption), 9)
+            descriptions = [x.value for x in at.caption if x.value.startswith("Что оцениваем:")]
+            self.assertEqual(descriptions, ["Что оцениваем: " + FEATURE_DESCRIPTIONS[f] for f in result["scoring"]["feature_means"]])
+            impacts = [x.value for x in at.markdown if "п.п. MD" in x.value]
+            expected_impacts = []
+            for feature in result["scoring"]["feature_means"]:
+                label, color, number = contribution_display(contributions[feature])
+                expected_impacts.append(f":{color}[**{label} · {number} п.п. MD**]")
+            self.assertEqual(impacts, expected_impacts)
+            blocks = [node for node in at.get("flex_container") if node.proto.flex_container.border]
+            self.assertEqual(len(blocks), 9)
             self.assertEqual(len(fake.calls), 22)
             self.assertTrue(
                 any("Показ ключевой функции сервиса/продукта" in x.value for x in at.markdown)
