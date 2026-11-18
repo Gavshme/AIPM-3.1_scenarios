@@ -13,6 +13,107 @@ class ProviderError(RuntimeError):
     pass
 
 
+class ResponseFormatError(ProviderError):
+    """A safe diagnostic, without provider bodies or scenario text."""
+
+
+def _json_document(text):
+    """Isolate one complete JSON root, never recover a nested partial result."""
+    start = re.search(r"[\[{]", text)
+    if start is None:
+        raise ResponseFormatError("Модель вернула текст без JSON с оценками.")
+    stack, quoted, escaped = [], False, False
+    for i in range(start.start(), len(text)):
+        char = text[i]
+        if quoted:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == '"':
+                quoted = False
+        elif char == '"':
+            quoted = True
+        elif char in "[{":
+            stack.append(char)
+        elif char in "]}":
+            if not stack or stack.pop() != (
+                "[" if char == "]" else "{"
+            ):
+                raise ResponseFormatError("В JSON модели нарушены скобки.")
+            if not stack:
+                if re.search(r"[\[{]", text[i + 1:]):
+                    raise ResponseFormatError("Модель вернула несколько JSON-блоков вместо одного.")
+                return text[start.start():i + 1]
+    raise ResponseFormatError("JSON модели не завершён: ответ обрезан или повреждён.")
+
+
+def _remove_trailing_commas(text):
+    """Remove only commas before closing brackets, preserving all string data."""
+    result, quoted, escaped = [], False, False
+    for i, char in enumerate(text):
+        if quoted:
+            result.append(char)
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == '"':
+                quoted = False
+        elif char == '"':
+            quoted = True
+            result.append(char)
+        elif char == "," and re.match(r"\s*[\]}]", text[i + 1:]):
+            previous = "".join(result).rstrip()
+            if not previous or previous[-1] in "[{,:":
+                result.append(char)
+        else:
+            result.append(char)
+    return "".join(result)
+
+
+def decode_response(raw):
+    try:
+        choice = raw["choices"][0]
+        message = choice["message"]
+        content = message.get("content")
+    except (KeyError, IndexError, TypeError, AttributeError):
+        raise ResponseFormatError("API вернул ответ без choices/message.") from None
+    if choice.get("finish_reason") in {"length", "max_tokens"}:
+        raise ResponseFormatError("Ответ модели обрезан лимитом токенов.")
+    if message.get("refusal") or choice.get("finish_reason") == "content_filter":
+        raise ResponseFormatError("Модель отказалась возвращать оценки.")
+    if isinstance(content, list):
+        if not all(isinstance(p, dict) and p.get("type") == "text" and isinstance(p.get("text"), str) for p in content):
+            raise ResponseFormatError("API вернул неподдерживаемый формат текстовых блоков.")
+        content = "".join(p["text"] for p in content)
+    if content is None or isinstance(content, str) and not content.strip():
+        raise ResponseFormatError("Модель вернула пустой ответ вместо оценок.")
+    if not isinstance(content, str):
+        raise ResponseFormatError("API вернул нетекстовый ответ модели.")
+    document = _json_document(content.lstrip("\ufeff").strip())
+    cleaned = _remove_trailing_commas(document)
+    literal_control_characters = False
+    try:
+        # Literal newlines inside evidence strings are safe to preserve. No
+        # missing fields, quotes, brackets or feature values are invented.
+        try:
+            payload = json.loads(cleaned)
+        except json.JSONDecodeError:
+            payload = json.loads(cleaned, strict=False)
+            literal_control_characters = True
+    except json.JSONDecodeError as exc:
+        raise ResponseFormatError(
+            f"В JSON модели ошибка синтаксиса (строка {exc.lineno}, столбец {exc.colno})."
+        ) from None
+    notes = []
+    if document != content.strip() or cleaned != document:
+        notes.append("Убрано внешнее оформление JSON или завершающие запятые; оценки не изменены.")
+    if literal_control_characters:
+        notes.append("Сохранены буквальные переносы строк/управляющие символы внутри текстовых обоснований.")
+    return payload, notes
+
+
 _LOCKS = {}
 _GUARD = threading.Lock()
 
@@ -72,11 +173,7 @@ class LlmClient:
                 raw = None
                 try:
                     raw = self._post(body)
-                    if raw["choices"][0].get("finish_reason") == "length":
-                        raise ValueError("Ответ обрезан провайдером.")
-                    text = raw["choices"][0]["message"]["content"]
-                    text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text.strip()).strip()
-                    payload = json.loads(text)
+                    payload, transport_notes = decode_response(raw)
                     row, notes = validator(payload)
                     obs = {
                         "fingerprint": fp,
@@ -90,6 +187,7 @@ class LlmClient:
                         "response_model": raw.get("model"),
                         "usage": raw.get("usage"),
                         "attempts": attempt,
+                        "transport_notes": transport_notes,
                     }
                     atomic_json(path, obs)
                     return row, notes, obs
@@ -101,6 +199,8 @@ class LlmClient:
                         "error_type": type(exc).__name__,
                         "attempt": attempt,
                     }
+                    if isinstance(exc, ResponseFormatError):
+                        failure["error_detail"] = str(exc)
                     if isinstance(raw, dict):
                         failure["raw_response"] = {
                             k: raw[k]
@@ -111,12 +211,13 @@ class LlmClient:
                         self.cache / "failed" / fp / (str(attempt) + ".json"), failure
                     )
                     if attempt == 3:
+                        detail = str(exc) if isinstance(exc, ResponseFormatError) else type(exc).__name__
                         raise ProviderError(
                             "Не удалось завершить "
                             + slot
                             + " ("
-                            + type(exc).__name__
-                            + "). Успешные этапы сохранены; можно повторить запуск."
+                            + detail
+                            + ") после 3 попыток. Успешные этапы сохранены; можно повторить запуск."
                         ) from None
                     time.sleep(2)
 
@@ -132,7 +233,12 @@ class LlmClient:
         )
         if not response.ok:
             raise ProviderError("HTTP " + str(response.status_code))
-        return response.json()
+        try:
+            return response.json()
+        except ValueError:
+            raise ResponseFormatError(
+                "API вернул не JSON (HTTP " + str(response.status_code) + ")."
+            ) from None
 
     def verify_observation(self, obs, body, slot):
         if (
