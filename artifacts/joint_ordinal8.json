@@ -1,0 +1,71 @@
+{
+  "features": [
+    "main_character",
+    "numeric_offer_on_screen",
+    "panel__distinct_benefit_count",
+    "panel__offer_novelty_explanation_need",
+    "promo",
+    "panel__content_precision",
+    "message_competition_mean",
+    "panel__key_service_function_demonstration"
+  ],
+  "penalty": 0.05,
+  "scaler_mean": [
+    0.4027777777777778,
+    0.2777777777777778,
+    2.0069444444444446,
+    0.3333333333333333,
+    0.375,
+    3.5462962962962963,
+    0.12962962962962962,
+    1.3263888888888888
+  ],
+  "scaler_scale": [
+    0.43145068241691853,
+    0.4240093756242708,
+    0.7708958933572431,
+    0.4054033199812896,
+    0.4658474953124562,
+    0.5774987455375065,
+    0.24410048752711236,
+    0.6816530266678437
+  ],
+  "weights": [
+    0.602190772185782,
+    0.4517060544977462,
+    -0.6349609790217497,
+    0.4528027052751566,
+    0.4119443037610408,
+    0.6655669909702926,
+    -0.18003397139584393,
+    -0.2795150723659307
+  ],
+  "thresholds": [
+    -1.8605698692930188,
+    1.2822743299628057
+  ],
+  "human_cutoffs": [
+    20,
+    26
+  ],
+  "model_id": "scenario-joint-ordinal8-four-20261118",
+  "assessors": [
+    "google/gemini-3.1-pro-preview",
+    "anthropic/claude-sonnet-4.6",
+    "openai/gpt-5.4",
+    "anthropic/claude-opus-4.6"
+  ],
+  "default_class_rule": "posterior_mode",
+  "probability_calibration": "none",
+  "training_target": "video and human MD classes",
+  "target_weights": {
+    "video": 0.5,
+    "human": 0.5
+  },
+  "video_cutoffs": [
+    19.55303191060736,
+    28.61248470469908
+  ],
+  "training_scenarios": 56,
+  "training_families": 54
+}

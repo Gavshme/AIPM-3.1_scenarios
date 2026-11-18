@@ -356,7 +356,7 @@ class PipelineTests(unittest.TestCase):
         self.assertGreater(len(list(Path(self.tmp.name).rglob("*.json"))), 3)
 
     def test_cli_uses_cache_and_replays_without_key(self):
-        evaluate_card(self.source, self.client, use_function_demo=True)
+        evaluate_card(self.source, self.client, use_function_demo=True, use_nusvr=True)
         input = Path(self.tmp.name) / "input.json"
         output = Path(self.tmp.name) / "output.json"
         input.write_text(json.dumps(self.source, ensure_ascii=False))

@@ -74,7 +74,14 @@ def validate_stage(stage, spec, card, payload, claim=None, *, message=None):
     if len(payload["ratings"]) != 1 or payload["ratings"][0]["id"] != card["id"]:
         raise ProtocolError("Неверный id или неполный ответ.")
     row = payload["ratings"][0]
-    if stage == "demo_target":
+    if stage == "role_inputs":
+        for feature in (
+            "fresh__audiovisual_claim_alignment", "panel__mandatory_inference_chain_length",
+            "panel__product_role_reveal_time_band",
+        ):
+            if type(row[feature]) is not int or not row["evidence"][feature].strip():
+                raise ProtocolError("Нет корректной оценки или обоснования: " + feature)
+    elif stage == "demo_target":
         if not row["target"].strip():
             raise ProtocolError("Пустое предложение для оценки показа функции.")
     elif stage == "function_demo":

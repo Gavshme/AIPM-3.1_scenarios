@@ -1,0 +1,11 @@
+{
+  "version": "scenario-nusvr9-joint-ordinal8-four-20261118-v1",
+  "selected_by_user": "2026-11-18",
+  "source_sha256": {
+    "scenario_nusvr_role_reveal_20261118/models/nusvr9_role/state.json": "9a75d2054f90a7ac03386bc353eff82bf94c6eddafbd3564f3a86ca24849254e",
+    "scenario_nusvr_role_reveal_20261118/models/nusvr9_role/estimator.joblib": "0fe1fa6af98f728f5b58ff104a92d77c4bcbbf8f2a5c81273c217f3b22d03469",
+    "scenario_joint_calibration_methods_20261118/direct_ordinal8_model.json": "7e5c11e9c45ba6aa16dde6ee15aa4707287b785d07815690e2e394cfa459006e",
+    "scenarios_video_model_20261118/contract.json": "f05bdff40cc4fa261f043780e385d3cf90840805cbbd7945b0c17897153f5f7d"
+  },
+  "export": "numeric frozen parameters and synthetic parity fixtures only; no inference fitting"
+}

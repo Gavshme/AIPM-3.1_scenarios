@@ -8,7 +8,7 @@ from .pipeline import evaluate_card, replay_result
 
 def main():
     ap = argparse.ArgumentParser(
-        description="Оценка сценариев: AI-посыл → четыре оценщика → Ridge MD."
+        description="Оценка сценариев: четыре оценщика → NuSVR MD и порядковый класс по 8 признакам."
     )
     sub = ap.add_subparsers(dest="command", required=True)
     e = sub.add_parser("evaluate")
@@ -48,6 +48,7 @@ def main():
                         item["card"]["id"] + ": " + text, flush=True
                     ),
                     use_function_demo=True,
+                    use_nusvr=True,
                 )
                 out["results"].append(result)
                 print(

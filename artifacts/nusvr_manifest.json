@@ -1,0 +1,17 @@
+{
+  "version": "scenario-nusvr9-joint-ordinal8-four-20261118-v1",
+  "files_sha256": {
+    "artifacts/ridge.json": "330fe4c7d8e656076f91d009577f67f00b90aca3f94c2eb83f18dfdcd226fb30",
+    "artifacts/metrics.json": "e52fa11c8d74be1989bf8655d40dee54f81280473c6686aefb9b114fcf1c20af",
+    "artifacts/provenance.json": "801e2741c2e1743a8dfb564d4d26d9f8342aad8e8c6ead85c8bf653c39017108",
+    "protocols/stages.json": "f9566f8c9fcec7d6569ea2307eb6993446ae75d8472d41d0b3fb0d35bda3eed9",
+    "artifacts/author_message.json": "26f8f0d87295b7c21f6cbfccf31d76b8e80a9ecb8d8b924762a780b28af5625e",
+    "artifacts/function_demo.json": "1acda47f70a89c4e5aa2053035ae9ffb1dc48ddbac79925060b7f35e0f9a4b2b",
+    "artifacts/nusvr9.json": "155460abf19783c103dd4c33adf74bdae313566db985470189e76a19d6fecc52",
+    "artifacts/joint_ordinal8.json": "b52bfb73e057188c68671f6a2db0b855118e5880a0c7183f5859a4d3eb70f9e9",
+    "artifacts/role_inputs.json": "9ca75bd4f65eb7e0bca5f4883c0f15e8f1c3b18eb14f6764bc69dd54c99dbf06",
+    "artifacts/release_metrics.json": "0d61b9c47013acbbe229ae373901e9a7b91d8dad06e310c9b8961806c64173ac",
+    "artifacts/release_provenance.json": "6f5788d9a8bc3ec0127d94d914f07ee261b016c592eb44a14cbffed7c2932235",
+    "tests/fixtures/nusvr_ordinal.json": "85f62a09775d4a219d7896a73369049bb48979e184a61e0755ad861d771ee5b9"
+  }
+}

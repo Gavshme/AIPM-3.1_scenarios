@@ -27,7 +27,7 @@ st.write(
     "Сравните, насколько понятно сценарии передают предложение сервиса и пользу для пользователя."
 )
 st.caption(
-    "AI формулирует посыл из раздела «Сообщение», затем четыре оценщика измеряют восемь признаков."
+    "AI формулирует посыл из раздела «Сообщение», затем четыре оценщика анализируют признаки сценария."
 )
 key = setting("VSELLM_API_KEY")
 base_url = setting("VSELLM_BASE_URL", DEFAULT_BASE_URL)
@@ -189,6 +189,7 @@ with new_tab:
                             client,
                             progress=lambda text: status.update(label=text),
                             use_function_demo=True,
+                            use_nusvr=True,
                         )
                         status.update(label="Готовится общее объяснение по признакам.")
                         try:

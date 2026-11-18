@@ -1,0 +1,1986 @@
+[
+  {
+    "id": "synthetic_00",
+    "rows": [
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 0.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 0.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 0.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 0.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 1.0
+      }
+    ],
+    "assessor_scores": [
+      26.796969768947815,
+      26.796969768947815,
+      26.796969768947815,
+      26.796969768947815
+    ],
+    "mean_score": 26.796969768947815,
+    "class_index": 1,
+    "class_probabilities": [
+      0.1186645438338304,
+      0.6385937443557169,
+      0.24274171181045268
+    ]
+  },
+  {
+    "id": "synthetic_01",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 0.0
+      }
+    ],
+    "assessor_scores": [
+      24.49282356290885,
+      24.49282356290885,
+      24.49282356290885,
+      24.49282356290885
+    ],
+    "mean_score": 24.49282356290885,
+    "class_index": 2,
+    "class_probabilities": [
+      0.018935515938027045,
+      0.29007385005824243,
+      0.6909906340037305
+    ]
+  },
+  {
+    "id": "synthetic_02",
+    "rows": [
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 0.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 0.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 0.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 0.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      }
+    ],
+    "assessor_scores": [
+      24.300862891718428,
+      24.300862891718428,
+      24.300862891718428,
+      24.300862891718428
+    ],
+    "mean_score": 24.300862891718428,
+    "class_index": 0,
+    "class_probabilities": [
+      0.9818855060009277,
+      0.017318884795340606,
+      0.0007956092037316731
+    ]
+  },
+  {
+    "id": "synthetic_03",
+    "rows": [
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 1.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 1.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 1.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 1.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 0.0
+      }
+    ],
+    "assessor_scores": [
+      24.43150218267924,
+      24.43150218267924,
+      24.43150218267924,
+      24.43150218267924
+    ],
+    "mean_score": 24.43150218267924,
+    "class_index": 2,
+    "class_probabilities": [
+      0.03227754111167656,
+      0.4036443967806899,
+      0.5640780621076336
+    ]
+  },
+  {
+    "id": "synthetic_04",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 4.0
+      }
+    ],
+    "assessor_scores": [
+      24.643862638666036,
+      24.643862638666036,
+      24.643862638666036,
+      24.643862638666036
+    ],
+    "mean_score": 24.643862638666036,
+    "class_index": 0,
+    "class_probabilities": [
+      0.5898310361111959,
+      0.38103011411501464,
+      0.029138849773789444
+    ]
+  },
+  {
+    "id": "synthetic_05",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 1.0
+      }
+    ],
+    "assessor_scores": [
+      25.822163749563494,
+      25.822163749563494,
+      25.822163749563494,
+      25.822163749563494
+    ],
+    "mean_score": 25.822163749563494,
+    "class_index": 1,
+    "class_probabilities": [
+      0.08461811266615722,
+      0.597094006951104,
+      0.3182878803827387
+    ]
+  },
+  {
+    "id": "synthetic_06",
+    "rows": [
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 3.0
+      }
+    ],
+    "assessor_scores": [
+      24.51282859104983,
+      24.51282859104983,
+      24.51282859104983,
+      24.51282859104983
+    ],
+    "mean_score": 24.51282859104983,
+    "class_index": 1,
+    "class_probabilities": [
+      0.26166141334139337,
+      0.629774514858324,
+      0.1085640718002826
+    ]
+  },
+  {
+    "id": "synthetic_07",
+    "rows": [
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 3.0
+      }
+    ],
+    "assessor_scores": [
+      22.208280872549896,
+      22.208280872549896,
+      22.208280872549896,
+      22.208280872549896
+    ],
+    "mean_score": 22.208280872549896,
+    "class_index": 0,
+    "class_probabilities": [
+      0.9704809296481466,
+      0.0282079999505207,
+      0.0013110704013327146
+    ]
+  },
+  {
+    "id": "synthetic_08",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 4.0
+      }
+    ],
+    "assessor_scores": [
+      24.516560564513647,
+      24.516560564513647,
+      24.516560564513647,
+      24.516560564513647
+    ],
+    "mean_score": 24.516560564513647,
+    "class_index": 0,
+    "class_probabilities": [
+      0.8934379008055181,
+      0.10144070043590325,
+      0.005121398758578644
+    ]
+  },
+  {
+    "id": "synthetic_09",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 1.0
+      }
+    ],
+    "assessor_scores": [
+      23.742593335040763,
+      23.742593335040763,
+      23.742593335040763,
+      23.742593335040763
+    ],
+    "mean_score": 23.742593335040763,
+    "class_index": 0,
+    "class_probabilities": [
+      0.623412890479206,
+      0.35117784710618805,
+      0.02540926241460595
+    ]
+  },
+  {
+    "id": "synthetic_10",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 0.0
+      }
+    ],
+    "assessor_scores": [
+      25.32503956467372,
+      25.32503956467372,
+      25.32503956467372,
+      25.32503956467372
+    ],
+    "mean_score": 25.32503956467372,
+    "class_index": 2,
+    "class_probabilities": [
+      0.0063079683733565164,
+      0.12191427654015746,
+      0.871777755086486
+    ]
+  },
+  {
+    "id": "synthetic_11",
+    "rows": [
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 2.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 2.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 2.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 2.0
+      }
+    ],
+    "assessor_scores": [
+      25.225562785335903,
+      25.225562785335903,
+      25.225562785335903,
+      25.225562785335903
+    ],
+    "mean_score": 25.225562785335903,
+    "class_index": 1,
+    "class_probabilities": [
+      0.17059734539630736,
+      0.6559631898610315,
+      0.17343946474266114
+    ]
+  },
+  {
+    "id": "synthetic_12",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 4.0
+      }
+    ],
+    "assessor_scores": [
+      30.013033358258447,
+      30.013033358258447,
+      30.013033358258447,
+      30.013033358258447
+    ],
+    "mean_score": 30.013033358258447,
+    "class_index": 2,
+    "class_probabilities": [
+      0.03433526355247378,
+      0.41736591205135365,
+      0.5482988243961726
+    ]
+  },
+  {
+    "id": "synthetic_13",
+    "rows": [
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      }
+    ],
+    "assessor_scores": [
+      24.574828193765402,
+      24.574828193765402,
+      24.574828193765402,
+      24.574828193765402
+    ],
+    "mean_score": 24.574828193765402,
+    "class_index": 1,
+    "class_probabilities": [
+      0.38724770340011083,
+      0.5488250763894785,
+      0.06392722021041064
+    ]
+  },
+  {
+    "id": "synthetic_14",
+    "rows": [
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      }
+    ],
+    "assessor_scores": [
+      24.61443284869232,
+      24.61443284869232,
+      24.61443284869232,
+      24.61443284869232
+    ],
+    "mean_score": 24.61443284869232,
+    "class_index": 0,
+    "class_probabilities": [
+      0.9934619414458828,
+      0.006254100403375817,
+      0.0002839581507413369
+    ]
+  },
+  {
+    "id": "synthetic_15",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 2.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 2.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 2.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 2.0
+      }
+    ],
+    "assessor_scores": [
+      23.409061572333695,
+      23.409061572333695,
+      23.409061572333695,
+      23.409061572333695
+    ],
+    "mean_score": 23.409061572333695,
+    "class_index": 0,
+    "class_probabilities": [
+      0.58990237367424,
+      0.38096711736888533,
+      0.029130508956874634
+    ]
+  },
+  {
+    "id": "synthetic_16",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 2.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 1.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 1.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 2.0
+      }
+    ],
+    "assessor_scores": [
+      24.88856189450895,
+      24.724879890891277,
+      24.467728763323016,
+      24.539826188937987
+    ],
+    "mean_score": 24.655249184415304,
+    "class_index": 2,
+    "class_probabilities": [
+      0.024736507886384474,
+      0.34541118120258785,
+      0.6298523109110277
+    ]
+  },
+  {
+    "id": "synthetic_17",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 2.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 0.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 2.0
+      }
+    ],
+    "assessor_scores": [
+      24.895823077521563,
+      21.965608434886036,
+      28.51269881846623,
+      26.93385788714374
+    ],
+    "mean_score": 25.576997054504393,
+    "class_index": 1,
+    "class_probabilities": [
+      0.17988940590079977,
+      0.655696815239095,
+      0.16441377886010533
+    ]
+  },
+  {
+    "id": "synthetic_18",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 1.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      }
+    ],
+    "assessor_scores": [
+      27.83394425898712,
+      23.63652137058107,
+      27.398894960874948,
+      26.633851149302785
+    ],
+    "mean_score": 26.37580293493648,
+    "class_index": 1,
+    "class_probabilities": [
+      0.05890555843618889,
+      0.5329728704300318,
+      0.40812157113377934
+    ]
+  },
+  {
+    "id": "synthetic_19",
+    "rows": [
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 1.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 2.0
+      }
+    ],
+    "assessor_scores": [
+      24.958889820423163,
+      24.566189141783322,
+      24.561690278533877,
+      25.40047930806374
+    ],
+    "mean_score": 24.871812137201026,
+    "class_index": 1,
+    "class_probabilities": [
+      0.10535007957301011,
+      0.6264354594302595,
+      0.2682144609967304
+    ]
+  },
+  {
+    "id": "synthetic_20",
+    "rows": [
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 2.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 1.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 1.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 2.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 2.0
+      }
+    ],
+    "assessor_scores": [
+      24.608559391893753,
+      24.526098654107358,
+      24.58471423965832,
+      24.606184889680993
+    ],
+    "mean_score": 24.581389293835105,
+    "class_index": 0,
+    "class_probabilities": [
+      0.6363761352575338,
+      0.3395559644794034,
+      0.024067900263062825
+    ]
+  },
+  {
+    "id": "synthetic_21",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 2.0
+      }
+    ],
+    "assessor_scores": [
+      24.181141287566554,
+      24.693377720177907,
+      24.6374150939849,
+      24.411535866707744
+    ],
+    "mean_score": 24.480867492109276,
+    "class_index": 1,
+    "class_probabilities": [
+      0.30367273704786785,
+      0.6062732036264373,
+      0.09005405932569488
+    ]
+  },
+  {
+    "id": "synthetic_22",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 1.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 1.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      }
+    ],
+    "assessor_scores": [
+      27.2365292274699,
+      26.145239772484807,
+      31.31312321532694,
+      26.15613614181365
+    ],
+    "mean_score": 27.712757089273822,
+    "class_index": 1,
+    "class_probabilities": [
+      0.1085140153060418,
+      0.6297246125808381,
+      0.2617613721131201
+    ]
+  },
+  {
+    "id": "synthetic_23",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 1.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 1.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 3.0
+      }
+    ],
+    "assessor_scores": [
+      24.501943662245314,
+      24.188568282752364,
+      24.17626605809601,
+      24.43469161008184
+    ],
+    "mean_score": 24.325367403293882,
+    "class_index": 1,
+    "class_probabilities": [
+      0.26874522129265865,
+      0.6261591391104356,
+      0.10509563959690571
+    ]
+  },
+  {
+    "id": "synthetic_24",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 1.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 1.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 3.0
+      }
+    ],
+    "assessor_scores": [
+      24.528521882256893,
+      27.005347883197032,
+      22.595503952219147,
+      27.070195235285027
+    ],
+    "mean_score": 25.299892238239526,
+    "class_index": 1,
+    "class_probabilities": [
+      0.33791678829781896,
+      0.5841131403018915,
+      0.07797007140028955
+    ]
+  },
+  {
+    "id": "synthetic_25",
+    "rows": [
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 2.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 1.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 4.0
+      }
+    ],
+    "assessor_scores": [
+      24.633500302773776,
+      27.294884127988965,
+      23.743750676760193,
+      25.13672590816788
+    ],
+    "mean_score": 25.202215253922702,
+    "class_index": 1,
+    "class_probabilities": [
+      0.2989317335646554,
+      0.609151631684015,
+      0.0919166347513296
+    ]
+  },
+  {
+    "id": "synthetic_26",
+    "rows": [
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 1.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 2.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 1.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 2.0
+      }
+    ],
+    "assessor_scores": [
+      22.958193161343715,
+      24.704874424795715,
+      26.547534126953416,
+      27.42066662121604
+    ],
+    "mean_score": 25.40781708357722,
+    "class_index": 1,
+    "class_probabilities": [
+      0.06713445024656547,
+      0.557972141905067,
+      0.37489340784836744
+    ]
+  },
+  {
+    "id": "synthetic_27",
+    "rows": [
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 2.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 1.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 4.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 2.0
+      }
+    ],
+    "assessor_scores": [
+      23.736567955633852,
+      25.191821216832682,
+      25.296624439884148,
+      24.425345031549128
+    ],
+    "mean_score": 24.662589660974955,
+    "class_index": 1,
+    "class_probabilities": [
+      0.1932573633261468,
+      0.6540792061945526,
+      0.15266343047930053
+    ]
+  },
+  {
+    "id": "synthetic_28",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 0.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 1.0
+      }
+    ],
+    "assessor_scores": [
+      24.555900879611354,
+      24.388335399262935,
+      24.467242515208586,
+      24.496124998667895
+    ],
+    "mean_score": 24.47690094818769,
+    "class_index": 1,
+    "class_probabilities": [
+      0.3356840651957928,
+      0.5856242169670496,
+      0.07869171783715756
+    ]
+  },
+  {
+    "id": "synthetic_29",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 1.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 2.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 2.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 0.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 4.0
+      }
+    ],
+    "assessor_scores": [
+      24.393624370138266,
+      24.132312787578275,
+      28.105308195607215,
+      26.07903255360601
+    ],
+    "mean_score": 25.67756947673244,
+    "class_index": 1,
+    "class_probabilities": [
+      0.29066826528584433,
+      0.614042937267174,
+      0.09528879744698171
+    ]
+  },
+  {
+    "id": "synthetic_30",
+    "rows": [
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 3.0,
+        "promo": 0.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 2.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 1.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 1.0,
+        "panel__distinct_benefit_count": 0.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 0.0,
+        "panel__content_precision": 0.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 2.0
+      }
+    ],
+    "assessor_scores": [
+      25.348873695521906,
+      24.635583059127107,
+      23.211781376214645,
+      24.641126491602378
+    ],
+    "mean_score": 24.45934115561651,
+    "class_index": 1,
+    "class_probabilities": [
+      0.28555147216863225,
+      0.6169871707009951,
+      0.09746135713037263
+    ]
+  },
+  {
+    "id": "synthetic_31",
+    "rows": [
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 2.0,
+        "promo": 1.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 3.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 0.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 3.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 1.0,
+        "message_competition_mean": 0.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 0.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 2.0,
+        "panel__offer_novelty_explanation_need": 1.0,
+        "promo": 1.0,
+        "panel__content_precision": 4.0,
+        "message_competition_mean": 2.0,
+        "panel__key_service_function_demonstration": 1.0,
+        "panel__product_role_reveal_time_band": 3.0
+      },
+      {
+        "main_character": 1.0,
+        "numeric_offer_on_screen": 0.0,
+        "panel__distinct_benefit_count": 4.0,
+        "panel__offer_novelty_explanation_need": 0.0,
+        "promo": 0.0,
+        "panel__content_precision": 3.0,
+        "message_competition_mean": 1.0,
+        "panel__key_service_function_demonstration": 0.0,
+        "panel__product_role_reveal_time_band": 4.0
+      }
+    ],
+    "assessor_scores": [
+      23.5473184223558,
+      22.00329848814962,
+      25.486752203059194,
+      24.990410235597665
+    ],
+    "mean_score": 24.006944837290572,
+    "class_index": 0,
+    "class_probabilities": [
+      0.4866359939706383,
+      0.469816364798468,
+      0.04354764123089372
+    ]
+  }
+]

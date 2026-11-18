@@ -1,19 +1,22 @@
 # coding: utf-8
 import numpy as np
 
-from .config import ACTIVE_MODELS, DEMO_FEATURES, ROOT, digest, read_json
+from .config import ACTIVE_MODELS, DEMO_FEATURES, ROOT, digest, read_json, verify_nusvr_bundle
 
 
 CLASSES = ("Низкий", "Средний", "Высокий")
 
 
-def classify_features(feature_means):
-    model = read_json(ROOT / "artifacts/ordinal_classes.json")
+def classify_features(feature_means, *, joint=False):
+    if joint:
+        verify_nusvr_bundle()
+    artifact = "joint_ordinal8.json" if joint else "ordinal_classes.json"
+    model = read_json(ROOT / "artifacts" / artifact)
     columns = model["features"]
     if (
         columns != DEMO_FEATURES
         or model["assessors"] != ACTIVE_MODELS
-        or model["default_class_rule"] != "posterior_median"
+        or model["default_class_rule"] != ("posterior_mode" if joint else "posterior_median")
     ):
         raise ValueError("Классификатор несовместим с признаками или составом оценщиков.")
     features = np.array([feature_means[col] for col in columns], dtype=float)
@@ -32,10 +35,11 @@ def classify_features(feature_means):
     location = np.dot((features - means) / scale, weights)
     logits = thresholds - location
     cumulative = 1 / (1 + np.exp(-np.clip(logits, -700, 700)))
-    index = int(np.count_nonzero(cumulative < 0.5))
+    probabilities = np.diff(np.r_[0.0, cumulative, 1.0])
+    index = int(np.argmax(probabilities)) if joint else int(np.count_nonzero(cumulative < 0.5))
     return {
         "class": CLASSES[index],
         "model_id": model["model_id"],
         "model_hash": digest(model),
-        "probabilities": dict(zip(CLASSES, np.diff(np.r_[0.0, cumulative, 1.0]).tolist())),
+        "probabilities": dict(zip(CLASSES, probabilities.tolist())),
     }

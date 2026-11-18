@@ -4,7 +4,7 @@ import re
 from jsonschema import validate
 
 from .client import LlmClient
-from .config import DEMO_FEATURE, LABELS, canonical
+from .config import DEMO_FEATURE, ROLE_FEATURE, LABELS, canonical
 
 SUMMARY_MODEL = "anthropic/claude-opus-5.5"
 SLOT = "feature_summary/1"
@@ -39,6 +39,8 @@ def assessor_reason(assessor, feature):
         return " ".join(filter(None, (detail["reason"], detail["evidence"])))
     if feature == DEMO_FEATURE:
         return ratings["function_demo"]["evidence"]
+    if feature == ROLE_FEATURE:
+        return ratings["role_inputs"]["evidence"][ROLE_FEATURE]
     return ratings["common"]["evidence"][feature]
 
 

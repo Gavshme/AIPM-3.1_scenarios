@@ -7,14 +7,14 @@ from .classification import classify_features
 from .config import (
     ACTIVE_MODELS, AUTHOR_PROTOCOL_VERSION, DEMO_FEATURE, DEMO_PROTOCOL_VERSION,
     FOUR_ASSESSOR_PROTOCOLS, FUNCTION_DEMO_PROTOCOLS, MODELS, ORDINAL_CLASS_PROTOCOL_VERSION,
-    PROTOCOL_VERSION, RESULT_VERSION, ROOT, digest, read_json,
+    NUSVR_PROTOCOL_VERSION, ROLE_FEATURE, PROTOCOL_VERSION, RESULT_VERSION, ROOT, digest, read_json,
 )
 from .protocol import protocols, request_body, validate_stage, select_claim
-from .scoring import ScenarioRidge
+from .scoring import ScenarioRidge, ScenarioNuSVR
 from .client import LlmClient
 
 
-def _features(common, precision, benefits, function_demo=None):
+def _features(common, precision, benefits, function_demo=None, role_inputs=None):
     features = {
         "main_character": common["main_character"],
         "numeric_offer_on_screen": common["numeric_offer_on_screen"],
@@ -28,6 +28,8 @@ def _features(common, precision, benefits, function_demo=None):
     }
     if function_demo is not None:
         features[DEMO_FEATURE] = function_demo["score"]
+    if role_inputs is not None:
+        features[ROLE_FEATURE] = role_inputs[ROLE_FEATURE]
     return features
 
 
@@ -55,11 +57,17 @@ def _claim_selection(rows, use_author_message):
     }
 
 
-def _assessor_stages(assessor, demo_bundle):
+def _assessor_stages(assessor, demo_bundle, use_nusvr=False):
     stages = {name: assessor["stages"][name] for name in ("common", "precision", "benefits")}
     if demo_bundle:
         stages["function_demo"] = {
             **demo_bundle["function_demo"],
+            "model": assessor["model"],
+            "parameters": stages["common"]["parameters"],
+        }
+    if use_nusvr:
+        stages["role_inputs"] = {
+            **read_json(ROOT / "artifacts/role_inputs.json"),
             "model": assessor["model"],
             "parameters": stages["common"]["parameters"],
         }
@@ -75,21 +83,22 @@ def _assessor_plan(models):
 
 def _score_result(scorer, assessed, assessor_count, version):
     scoring = scorer.summarize([a["features"] for a in assessed], assessor_count=assessor_count)
-    if version == ORDINAL_CLASS_PROTOCOL_VERSION:
-        classification = classify_features(scoring["feature_means"])
+    if version in {ORDINAL_CLASS_PROTOCOL_VERSION, NUSVR_PROTOCOL_VERSION}:
+        classification = classify_features(scoring["feature_means"], joint=version == NUSVR_PROTOCOL_VERSION)
         scoring["classification"] = classification
         scoring["class"] = classification["class"]
     return scoring
 
 
-def evaluate_card(source, client, progress=None, *, use_author_message=False, use_function_demo=False):
+def evaluate_card(source, client, progress=None, *, use_author_message=False, use_function_demo=False, use_nusvr=False):
+    use_function_demo = use_function_demo or use_nusvr
     use_author_message = use_author_message or use_function_demo
     card, ignored = normalize_card(source)
     assessors = _assessor_plan(ACTIVE_MODELS if use_function_demo else MODELS)
     assessor_count = len(assessors)
     bundle, message, claim_plan = _claim_plan(source, use_author_message, use_function_demo)
     demo_bundle = bundle if use_function_demo else None
-    scorer = ScenarioRidge(bundle)
+    scorer = ScenarioNuSVR() if use_nusvr else ScenarioRidge(bundle)
     if use_author_message:
         ignored.remove("message")
     observations = []
@@ -119,7 +128,7 @@ def evaluate_card(source, client, progress=None, *, use_author_message=False, us
         ratings = {}
         obs_all = []
         normalizations = []
-        for stage, spec in _assessor_stages(a, demo_bundle).items():
+        for stage, spec in _assessor_stages(a, demo_bundle, use_nusvr).items():
             body = request_body(spec, card, claim, demo_target=claim)
             row, nn, obs = client.observe(
                 body,
@@ -147,7 +156,7 @@ def evaluate_card(source, client, progress=None, *, use_author_message=False, us
         observations.extend(a.pop("observations"))
         notes.extend(a.pop("normalizations"))
     version = (
-        ORDINAL_CLASS_PROTOCOL_VERSION if use_function_demo
+        NUSVR_PROTOCOL_VERSION if use_nusvr else ORDINAL_CLASS_PROTOCOL_VERSION if use_function_demo
         else AUTHOR_PROTOCOL_VERSION if use_author_message
         else PROTOCOL_VERSION
     )
@@ -180,19 +189,21 @@ def explain_score(result):
         use_function_demo or version == AUTHOR_PROTOCOL_VERSION,
         use_function_demo,
     )
-    return ScenarioRidge(bundle).feature_contributions(result["scoring"]["model_inputs"])
+    scorer = ScenarioNuSVR() if version == NUSVR_PROTOCOL_VERSION else ScenarioRidge(bundle)
+    return scorer.feature_contributions(result["scoring"]["model_inputs"])
 
 
 def replay_result(result):
     source = result["input_card"]
     card, ignored = normalize_card(source)
     version = result.get("protocol_version")
+    use_nusvr = version == NUSVR_PROTOCOL_VERSION
     use_function_demo = version in FUNCTION_DEMO_PROTOCOLS
     has_separate_demo_target = version == DEMO_PROTOCOL_VERSION
     use_author_message = use_function_demo or version == AUTHOR_PROTOCOL_VERSION
     bundle, message, claim_plan = _claim_plan(source, use_author_message, use_function_demo)
     demo_bundle = bundle if use_function_demo else None
-    scorer = ScenarioRidge(bundle)
+    scorer = ScenarioNuSVR() if use_nusvr else ScenarioRidge(bundle)
     if use_author_message:
         ignored.remove("message")
     assessors = _assessor_plan(ACTIVE_MODELS if version in FOUR_ASSESSOR_PROTOCOLS else MODELS)
@@ -208,7 +219,7 @@ def replay_result(result):
     observations = result.get("observations", [])
     expected_count = (
         len(claim_plan) + int(has_separate_demo_target)
-        + sum(len(_assessor_stages(a, demo_bundle)) for a in assessors)
+        + sum(len(_assessor_stages(a, demo_bundle, use_nusvr)) for a in assessors)
     )
     if len(observations) != expected_count:
         raise ValueError(f"Нужны все {expected_count} этапов результата.")
@@ -251,7 +262,7 @@ def replay_result(result):
                 selection["fixed_main_claim"],
                 demo_target=demo_target,
             )
-            for stage, spec in _assessor_stages(a, demo_bundle).items()
+            for stage, spec in _assessor_stages(a, demo_bundle, use_nusvr).items()
         }
         assessed.append(
             {"model": a["model"], "features": _features(**rr), "ratings": rr}
@@ -262,7 +273,7 @@ def replay_result(result):
     stored = result["scoring"]
     if scoring["class"] != stored["class"]:
         raise ValueError("Класс не совпадает с пересчётом.")
-    if version == ORDINAL_CLASS_PROTOCOL_VERSION:
+    if version in {ORDINAL_CLASS_PROTOCOL_VERSION, NUSVR_PROTOCOL_VERSION}:
         expected = scoring["classification"]
         actual = stored.get("classification")
         if (

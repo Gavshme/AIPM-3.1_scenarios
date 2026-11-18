@@ -1,7 +1,7 @@
 # coding: utf-8
 import math
 import numpy as np
-from .config import DEMO_FEATURES, FEATURES, ROOT, digest, read_json, verify_bundle
+from .config import DEMO_FEATURES, FEATURES, NUSVR_FEATURES, ROOT, digest, read_json, verify_bundle, verify_nusvr_bundle
 
 
 class ScenarioRidge:
@@ -101,3 +101,46 @@ class ScenarioRidge:
                 if not mask & bit
             )
         return float(values[0]), contributions
+
+
+class ScenarioNuSVR(ScenarioRidge):
+    """Frozen RBF NuSVR, exported as numeric JSON; no fitting at runtime."""
+
+    def __init__(self):
+        self.bundle_hash = verify_nusvr_bundle()
+        self.state = read_json(ROOT / "artifacts/nusvr9.json")
+        self.columns = self.state["columns"]
+        s = self.state
+        if self.columns != NUSVR_FEATURES or s["kernel"] != "rbf":
+            raise ValueError("Несовместимая модель NuSVR.")
+        n = len(self.columns)
+        support = np.asarray(s["support_vectors"], dtype=float)
+        dual = np.asarray(s["dual_coef"], dtype=float)
+        vectors = [np.asarray(s[key], dtype=float) for key in ("median", "center", "scale")]
+        scalars = [s[key] for key in ("gamma", "intercept", "target_scale", "target_mean", "calibration_intercept", "calibration_slope", "step")]
+        if (
+            support.ndim != 2 or support.shape[1] != n or support.shape[0] == 0
+            or dual.shape != (support.shape[0],)
+            or any(a.shape != (n,) or not np.isfinite(a).all() for a in vectors)
+            or not np.isfinite(support).all() or not np.isfinite(dual).all()
+            or not np.isfinite(scalars).all() or not np.all(vectors[2] > 0)
+            or s["gamma"] <= 0 or s["target_scale"] <= 0 or s["step"] < 0
+            or s["calibration_slope"] <= 0
+        ):
+            raise ValueError("Некорректные параметры NuSVR.")
+
+    def predict(self, rows):
+        s = self.state
+        x = np.asarray([[self._number(row[c]) for c in self.columns] for row in rows], dtype=float)
+        x = np.where(np.isfinite(x), x, np.asarray(s["median"]))
+        z = (x - np.asarray(s["center"])) / np.asarray(s["scale"])
+        if s["step"]:
+            z = np.round(z / s["step"]) * s["step"]
+        support = np.asarray(s["support_vectors"])
+        squared_distance = np.maximum(
+            (z * z).sum(axis=1)[:, None] + (support * support).sum(axis=1)[None, :] - 2 * z @ support.T,
+            0.0,
+        )
+        p = np.exp(-s["gamma"] * squared_distance) @ np.asarray(s["dual_coef"]) + s["intercept"]
+        p = np.exp(np.clip(p * s["target_scale"] + s["target_mean"], -12, 3))
+        return np.clip(s["calibration_intercept"] + s["calibration_slope"] * p, .001, 1.)

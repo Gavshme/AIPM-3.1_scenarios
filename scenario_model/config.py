@@ -14,6 +14,8 @@ FEATURES = [
 ]
 DEMO_FEATURE = "panel__key_service_function_demonstration"
 DEMO_FEATURES = [*FEATURES, DEMO_FEATURE]
+ROLE_FEATURE = "panel__product_role_reveal_time_band"
+NUSVR_FEATURES = [*DEMO_FEATURES, ROLE_FEATURE]
 LABELS = dict(
     zip(
         FEATURES,
@@ -29,6 +31,7 @@ LABELS = dict(
     )
 )
 LABELS[DEMO_FEATURE] = "Показ ключевой функции сервиса/продукта"
+LABELS[ROLE_FEATURE] = "Время раскрытия роли продукта"
 MODELS = [
     "google/gemini-3.1-pro-preview",
     "anthropic/claude-sonnet-4.6",
@@ -43,7 +46,8 @@ DEMO_PROTOCOL_VERSION = "scenario-author-message-function-demo-five-v1"
 FULL_CLAIM_PROTOCOL_VERSION = "scenario-author-message-function-demo-full-claim-five-v1"
 FOUR_ASSESSOR_PROTOCOL_VERSION = "scenario-author-message-function-demo-full-claim-four-v1"
 ORDINAL_CLASS_PROTOCOL_VERSION = "scenario-author-message-function-demo-full-claim-four-ordinal-v1"
-FOUR_ASSESSOR_PROTOCOLS = {FOUR_ASSESSOR_PROTOCOL_VERSION, ORDINAL_CLASS_PROTOCOL_VERSION}
+NUSVR_PROTOCOL_VERSION = "scenario-nusvr9-joint-ordinal8-four-20261118-v1"
+FOUR_ASSESSOR_PROTOCOLS = {FOUR_ASSESSOR_PROTOCOL_VERSION, ORDINAL_CLASS_PROTOCOL_VERSION, NUSVR_PROTOCOL_VERSION}
 FUNCTION_DEMO_PROTOCOLS = {
     DEMO_PROTOCOL_VERSION, FULL_CLAIM_PROTOCOL_VERSION, *FOUR_ASSESSOR_PROTOCOLS,
 }
@@ -71,6 +75,14 @@ def read_json(path):
 
 def verify_bundle():
     manifest = read_json(ROOT / "artifacts/manifest.json")
+    return _verify_manifest(manifest)
+
+
+def verify_nusvr_bundle():
+    return _verify_manifest(read_json(ROOT / "artifacts/nusvr_manifest.json"))
+
+
+def _verify_manifest(manifest):
     for name, expected in manifest["files_sha256"].items():
         path = (ROOT / name).resolve()
         if (

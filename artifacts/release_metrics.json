@@ -1,0 +1,96 @@
+{
+  "version": "scenario-nusvr9-joint-ordinal8-four-20261118-v1",
+  "n_common_pairs": 56,
+  "n_common_families": 54,
+  "score_oof": {
+    "video": {
+      "spearman": 0.7797867268201577,
+      "pearson": 0.7138989091460795
+    },
+    "human": {
+      "spearman": 0.5277038579544594,
+      "pearson": 0.4578229175960954
+    },
+    "human_mae_pp": 5.9453928916527365,
+    "video_mae_pp": 3.4700988346992063
+  },
+  "score_validation": "56 leave-family-out score-model fits; feature scaling, target scaling and affine calibration all fit within training family set. Video reference is published full-fit MD, not video OOF.",
+  "class_oof": {
+    "video": {
+      "correct": 42,
+      "incorrect": 14,
+      "accuracy": 0.75,
+      "balanced_accuracy": 0.7058186911128087,
+      "class_sizes": [
+        11,
+        28,
+        17
+      ],
+      "correct_by_class": [
+        7,
+        25,
+        10
+      ],
+      "confusion_rows_target_columns_scenario": [
+        [
+          7,
+          4,
+          0
+        ],
+        [
+          0,
+          25,
+          3
+        ],
+        [
+          0,
+          7,
+          10
+        ]
+      ],
+      "two_class_errors": 0
+    },
+    "human": {
+      "correct": 33,
+      "incorrect": 23,
+      "accuracy": 0.5892857142857143,
+      "balanced_accuracy": 0.5548941798941799,
+      "class_sizes": [
+        14,
+        24,
+        18
+      ],
+      "correct_by_class": [
+        6,
+        19,
+        8
+      ],
+      "confusion_rows_target_columns_scenario": [
+        [
+          6,
+          7,
+          1
+        ],
+        [
+          1,
+          19,
+          4
+        ],
+        [
+          0,
+          10,
+          8
+        ]
+      ],
+      "two_class_errors": 1
+    },
+    "joint_accuracy": 0.6696428571428572,
+    "correct_against_both": 29,
+    "correct_against_at_least_one": 46,
+    "incorrect_against_both": 10
+  },
+  "class_validation": "54 leave-family-out folds; regularization selected by inner five-group cross-validation on joint log loss; scaler fit only on training data",
+  "independent_new_holdout": false,
+  "video_reference": "aipm-0719-refined-20261117; published full-fit video scores/classes",
+  "limitation": "Research cohort repeatedly used in model experiments; OOF is not independent confirmation."
+}
