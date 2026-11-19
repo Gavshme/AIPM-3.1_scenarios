@@ -88,9 +88,11 @@ def render_results(results):
         return
     st.subheader("Результаты оценки")
     for result in sorted(results, key=lambda r: -r["scoring"]["score"]):
+        name = str(result["input_card"].get("name") or result["card"]["id"])
+        score_label = f"{result['scoring']['score']:.1f}".replace(".", ",")
         with st.expander(
-            str(result["input_card"].get("name", result["card"]["id"])),
-            expanded=True,
+            f"{name} · MD {score_label}",
+            expanded=False,
         ):
             result_cards(result)
             if result.get("assessor_fallback"):

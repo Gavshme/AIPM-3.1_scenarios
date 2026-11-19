@@ -9,6 +9,29 @@ from test_pipeline import FakeClient
 
 
 class AppTests(unittest.TestCase):
+    def test_collapsed_results_show_name_and_score_in_descending_unrounded_order(self):
+        with tempfile.TemporaryDirectory() as cache:
+            source = read_json(ROOT / "examples/scenario.json")
+            result = evaluate_card(source, FakeClient(cache), use_nusvr=True)
+        items, results = [], []
+        for identifier, name, score in [("low", "Низкий скор", 18.2), ("middle", "Средний скор", 27.41), ("high", "Высокий скор", 27.44)]:
+            item = {**copy.deepcopy(source), "id": identifier, "name": name}
+            row = copy.deepcopy(result)
+            row["input_card"] = item
+            row["card"]["id"] = identifier
+            row["scoring"]["score"] = score
+            items.append(item)
+            results.append(row)
+        with patch("scenario_model.pipeline.evaluate_card", side_effect=results), patch("scenario_model.explanations.add_summary"), patch("requests.post", side_effect=AssertionError("Unexpected network")):
+            at = AppTest.from_file(str(ROOT / "app.py")).run(timeout=20)
+            at.text_area[0].set_value(json.dumps(items, ensure_ascii=False)).run()
+            at.sidebar.text_input[0].set_value("fake-key").run()
+            next(b for b in at.button if b.label == "Оценить сценарии").click().run(timeout=20)
+            self.assertEqual(len(at.exception), 0)
+            rows = [x for x in at.expander if " · MD " in x.label]
+            self.assertEqual([x.label for x in rows], ["Высокий скор · MD 27,4", "Средний скор · MD 27,4", "Низкий скор · MD 18,2"])
+            self.assertTrue(all(not x.proto.expanded for x in rows))
+
     def test_batch_limit_allows_20_and_blocks_21_before_api_calls(self):
         source = read_json(ROOT / "examples/scenario.json")
         with patch("requests.post", side_effect=AssertionError("Unexpected network")) as post:
