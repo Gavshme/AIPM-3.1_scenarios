@@ -2,7 +2,7 @@
 import copy, json, tempfile, unittest
 from unittest.mock import patch
 from streamlit.testing.v1 import AppTest
-from scenario_model.config import ROOT, read_json
+from scenario_model.config import LABELS, ROOT, read_json
 from scenario_model.explanations import FEATURE_DESCRIPTIONS, add_summary, contribution_display
 from scenario_model.pipeline import evaluate_card, explain_score
 from test_pipeline import FakeClient
@@ -71,7 +71,7 @@ class AppTests(unittest.TestCase):
             self.assertTrue(evaluate.call_args.kwargs["use_nusvr"])
             post.assert_not_called()
             self.assertEqual(len(at.dataframe), 0)
-            self.assertEqual(len(at.get("arrow_vega_lite_chart")), 1)
+            self.assertEqual(len(at.get("arrow_vega_lite_chart")), 0)
             self.assertIn("Основной посыл", at.get("html")[0].proto.body)
             self.assertIn("Класс по признакам сценария", at.get("html")[0].proto.body)
             self.assertIn(f"{result['scoring']['classification']['class']} класс", at.get("html")[0].proto.body)
@@ -80,12 +80,19 @@ class AppTests(unittest.TestCase):
             self.assertEqual(sum("В сценарии" in x.value for x in at.caption), 9)
             descriptions = [x.value for x in at.caption if x.value.startswith("Что оцениваем:")]
             self.assertEqual(descriptions, ["Что оцениваем: " + FEATURE_DESCRIPTIONS[f] for f in result["scoring"]["feature_means"]])
-            impacts = [x.value for x in at.markdown if "п.п. MD" in x.value]
+            impacts = [x.value for x in at.markdown if any(f"**{label}**" in x.value for label in ["Положительный вклад", "Отрицательный вклад", "Нейтральный вклад"])]
             expected_impacts = []
             for feature in result["scoring"]["feature_means"]:
                 label, color, number = contribution_display(contributions[feature])
-                expected_impacts.append(f":{color}[**{label} · {number} п.п. MD**]")
+                expected_impacts.append(f":{color}[**{label}**]")
             self.assertEqual(impacts, expected_impacts)
+            for direction in ["Положительный вклад", "Отрицательный вклад"]:
+                features = [f for f in result["scoring"]["feature_means"] if contribution_display(contributions[f])[0] == direction]
+                if features:
+                    self.assertIn("\n".join("- " + LABELS[f] for f in features), [x.value for x in at.markdown])
+            self.assertTrue(any("Повышают скор" in x.value for x in at.markdown))
+            self.assertTrue(any("Понижают скор" in x.value for x in at.markdown))
+            self.assertFalse(any("п.п." in x.value for x in [*at.markdown, *at.caption]))
             blocks = [node for node in at.get("flex_container") if node.proto.flex_container.border]
             self.assertEqual(len(blocks), 9)
             self.assertEqual(len(fake.calls), 22)

@@ -12,7 +12,6 @@ from scenario_model.explanations import (
     final_comment, read_summary,
 )
 from scenario_model.pipeline import evaluate_card, explain_score, replay_result
-from scenario_model.visualization import contribution_chart
 
 MAX_SCENARIOS_PER_BATCH = 20
 
@@ -96,14 +95,25 @@ def render_results(results):
             result_cards(result)
             if result.get("assessor_fallback"):
                 st.info("Рассчитано по трём оценщикам без Opus: он не вернул полный набор оценок.")
-            baseline, contributions = explain_score(result)
+            _, contributions = explain_score(result)
             means = result["scoring"]["feature_means"]
-            st.markdown("**Что повышает и снижает MD**")
-            st.vega_lite_chart(contribution_chart(means, contributions), use_container_width=True, theme=None)
-            st.caption(
-                f"Вклад в пунктах MD относительно базового скора {baseline:.2f}. "
-                "Плюс повышает итоговый скор, минус снижает."
-            )
+            directions = {feature: contribution_display(contributions[feature])[:2] for feature in means}
+            st.markdown("**Что влияет на скор**")
+            positive, negative = st.columns(2)
+            for column, heading, direction, color in [
+                (positive, "Повышают скор", "Положительный вклад", "green"),
+                (negative, "Понижают скор", "Отрицательный вклад", "red"),
+            ]:
+                with column:
+                    st.markdown(f":{color}[**{heading}**]")
+                    features = [feature for feature in means if directions[feature][0] == direction]
+                    if features:
+                        st.markdown("\n".join("- " + LABELS[feature] for feature in features))
+                    else:
+                        st.write("Нет таких признаков.")
+            neutral = [LABELS[feature] for feature in means if directions[feature][0] == "Нейтральный вклад"]
+            if neutral:
+                st.caption("Без заметного влияния на скор: " + ", ".join(neutral) + ".")
             try:
                 summary = read_summary(result)
             except (ValidationError, ValueError, TypeError, KeyError):
@@ -114,11 +124,11 @@ def render_results(results):
             for feature in means:
                 row = summary.get(feature)
                 conclusion = final_comment(result, feature, row["conclusion"] if row else "")
-                label, color, number = contribution_display(contributions[feature])
+                label, color = directions[feature]
                 with st.container(border=True):
                     title, impact = st.columns([3, 2])
                     title.markdown(f"**{LABELS[feature]}**")
-                    impact.markdown(f":{color}[**{label} · {number} п.п. MD**]")
+                    impact.markdown(f":{color}[**{label}**]")
                     st.caption("Что оцениваем: " + FEATURE_DESCRIPTIONS[feature])
                     value = f"{means[feature]:.2f}".rstrip("0").rstrip(".")
                     st.markdown(f"Средняя оценка: **{value}**")

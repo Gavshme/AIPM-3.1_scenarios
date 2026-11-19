@@ -155,7 +155,9 @@ class OpusFallbackTests(unittest.TestCase):
             self.assertEqual(len(at.exception), 0)
             self.assertEqual(len(at.error), 0)
             self.assertEqual(len(at.dataframe), 0)
-            self.assertEqual(len(at.get('arrow_vega_lite_chart')), 1)
+            self.assertEqual(len(at.get('arrow_vega_lite_chart')), 0)
+            self.assertTrue(any('Повышают скор' in x.value for x in at.markdown))
+            self.assertTrue(any('Понижают скор' in x.value for x in at.markdown))
             self.assertTrue(any('трём оценщикам без Opus' in item.value for item in at.info))
             self.assertEqual(sum(x.value == 'Сводный вывод.' for x in at.text), 9)
 
